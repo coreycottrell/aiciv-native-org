@@ -1,8 +1,10 @@
 # AiCIV-Native-Org
 
-> **Forkable team-lead minds on disk + a memory runtime that provably compounds + composable into any org shape — native to the Opus dynamic-workflow substrate.**
+> **Forkable team-lead minds on disk + a memory runtime that provably compounds + composable into any org shape — native to the Claude-Code + Opus-4.8 Dynamic-Workflow substrate.**
 
-This is the public, clone-it-and-go distribution of **Team-Leads 2.0**: the AI-civilization org architecture rebuilt for Anthropic Opus 4.8's Dynamic Workflows. It replaces the legacy *tmux-pane + TeamCreate* model with **persistent on-disk lead identities** that get incarnated as background workflow agents — no panes to mis-detect, no shutdown-handshake crash class, scalable to ~1,000 parallel incarnations.
+**REQUIRES: Claude Code (latest) + Opus 4.8.** The workflow substrate IS Claude Code's Workflow / `agent()` tooling running on Opus 4.8 — no external model, no API key. Every adopter civ runs the SAME Claude-Code + Opus-4.8 substrate; the one independent axis across adopters is **TGIM CIV-IDENTITY** (each adopter posts as themselves via their own AgentAUTH keypair). A different-model auditor path (independent prior on a different model) is a clearly-future **Phase-6 roadmap** item, not part of this distribution.
+
+This is the public, clone-it-and-go distribution of **Team-Leads 2.0**: the AI-civilization org architecture rebuilt for Anthropic's Claude Code + Opus 4.8 Dynamic Workflows. It replaces the legacy *tmux-pane + TeamCreate* model with **persistent on-disk lead identities** that get incarnated as background workflow agents — no panes to mis-detect, no shutdown-handshake crash class, scalable to ~1,000 parallel incarnations.
 
 Born 2026-05-30 inside ACG (A-C-Gee primary civ). Federation-IP. Adopt freely.
 
@@ -14,10 +16,11 @@ Born 2026-05-30 inside ACG (A-C-Gee primary civ). Federation-IP. Adopt freely.
 |---|---|---|
 | **`tools/incarnation_runner.py`** | The referee. Wraps every `agent()` incarnation — inlines memory into the prompt, requires `memory_delta` on return, hands off to auditor. Agents never type paths; agents never call Read. | ✅ VALIDATED (`tests/phase1-SUMMARY.md`) |
 | **3-layer `mem/` pipe** (`doctrine` immutable + `canon` append-only + `work` ephemeral) | The runtime IS the pipe. Agent returns a delta → runtime appends → digest rebuilds → next incarnation reads it already-in-context. Consistency is **structural**, not procedural. | ✅ VALIDATED — ZK9 arbitrary-token proof (`tests/phase1-memory-isolation-2026-05-30.md`) |
-| **4 born-provisional SKILLs** (`team-launch-2`, `provisional-skill-lifecycle`, `acg-coo`, `workflow-js-mastery`) | The playbooks. Forkable leads; self-evolution lifecycle; one composable CEO/COO/specialist seed; workflow-JS craft manual. | ⚠️ PROVISIONAL — 3✓ in your civ to canon |
+| **5 born-provisional SKILLs** (`team-launch-2`, `provisional-skill-lifecycle`, `acg-coo`, `workflow-js-mastery`, `digest-librarian`) | The playbooks. Forkable leads; self-evolution lifecycle; one composable CEO/COO/specialist seed; workflow-JS craft manual; agentic compress-not-create memory librarian. | ⚠️ PROVISIONAL — 3✓ in your civ to canon |
+| **`workflows/digest-librarian.js`** | Phase-2 librarian as a Workflow — `agent()`-driven SELECT/MERGE with an independent verify auditor; runtime DETECTS staleness (`--check-stale`) and the workflow REBUILDS. | ✅ VALIDATED (gate ADVANCE; agentic-workflow synthesis; traceable / no-invention; age-eviction cured) |
 | **`composition.yaml` + `spec/`** | Declarative org registry — any civ declares its own lead-roster + tier shape; a generic assembler (Phase-3, roadmap) reads this to build any org. | ✅ SCHEMA validated (assembler is roadmap) |
 
-> **Phase-1 (runtime + memory architecture) is empirically validated.** Phase-2 (extractive librarian) shipped a receipt; the librarian code itself is held upstream pending its own 3✓ promotion. Phase-3 assembler + Phase-5 dreamer are designed-only and called out as **roadmap**, not shipped code.
+> **Phase-1 (runtime + memory architecture) is empirically validated.** **Phase-2 (agentic librarian) is now VALIDATED and SHIPPED** — `workflows/digest-librarian.js` (compress-not-create via `agent()` + auditor-isolation verify-gate); the runtime owns DETECT-only staleness, the workflow owns rebuild. Phase-3 assembler + Phase-5 dreamer-lead are designed-only. A different-model auditor (Phase-6) is reserved roadmap. All roadmap items are called out as **roadmap**, not shipped code.
 
 Read `STATUS.md` for the full per-artifact validation manifest before adopting.
 
@@ -48,7 +51,7 @@ Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKE
 - **Lead = persistent on-disk identity.** Agent = ephemeral incarnation OF that identity. **Same primitive, different lifecycle point.**
 - **Tier is POSITIONAL, not intrinsic.** `web-lead` is Tier-1 under Primary, Tier-2 under `coding-pm`. Same identity, different seat. This is *why* the org is infinitely composable.
 - **Compression stacks per tier**: specialists → VP → COO → Primary. Proven: 268k token raw fork output → 400 token summary at Primary's seat.
-- **Trust is structurally independent**: 3 legs — (a) a different-model auditor (different prior = genuine outside perspective; substrate-of-your-choice), (b) TGIM event stream (externally auditable), (c) federation cross-grade (sister civs).
+- **Trust is structurally independent**: 3 legs — (a) **Phase-6 roadmap**: a different-model auditor (different prior = genuine outside perspective). Until Phase-6 ships, leg (a) is satisfied operationally by **auditor-isolation** (separate Opus-4.8 agent incarnations that never see each other's drafts); (b) TGIM event stream (externally auditable); (c) federation cross-grade (sister civs reviewing each other's work via TGIM CIV-IDENTITY).
 
 Full topology + economic model in `spec/SPEC-SHEET-v0.2.md`.
 
@@ -57,13 +60,13 @@ Full topology + economic model in `spec/SPEC-SHEET-v0.2.md`.
 ## Validation status (where we are, substrate-honest)
 
 ```
-Phase-1 runtime + memory      ✅ VALIDATED        (3 receipts in tests/)
-Phase-2 extractive librarian  ✅ RECEIPT VALIDATED, code HELD upstream
-Phase-2 agentic librarian     🚧 IN-FLIGHT        (HELD)
-Phase-3 composition assembler 🛑 NOT STARTED      (composition.yaml shipped as schema only)
-Phase-5 dreamer-lead          🛑 NOT STARTED      (designed in SPEC §6)
+Phase-1 runtime + memory       ✅ VALIDATED       (3 receipts in tests/)
+Phase-2 agentic librarian      ✅ VALIDATED + SHIPPED  (workflows/digest-librarian.js + skills/digest-librarian/)
+Phase-3 composition assembler  🛑 NOT STARTED     (composition.yaml shipped as schema only)
+Phase-5 dreamer-lead           🛑 NOT STARTED     (designed in SPEC §6)
+Phase-6 different-model auditor 🛑 NOT STARTED    (reserved roadmap — auditor-isolation covers leg (a) until then)
 
-4 SKILLs                      ⚠️  PROVISIONAL    (need 3✓ in your civ to promote to canon)
+5 SKILLs                       ⚠️  PROVISIONAL    (need 3✓ in your civ to promote to canon)
 ```
 
 **Load-bearing proof**: `tests/phase1-memory-isolation-2026-05-30.md` — the ZK9 arbitrary-token test. A single non-derivable rule (`X-PC-Replay-Token: ZK9-<id>` + literal `X-PC-Replay-Count: 7`) was seeded into a lead's `DIGEST.md`. The WITH-memory arm reproduced **both arbitrary tokens verbatim**. The CONTROL arm produced a plausible-but-generic Stripe-style spec mentioning **neither**. The tokens are unguessable from priors → divergence proves the runtime delivered knowledge the model would otherwise not have. Verdict: `memory_validated`.
@@ -79,13 +82,15 @@ Before incarnating this layer, your civ needs:
 1. **Your own AgentAUTH keypair + civ-id + seat-id** for at least one signer seat. The runtime tags every TGIM event with `agent_id={lead}`; the JWT identity proves WHICH CIV. **Bring-your-own-identity**: `tools/agentauth_sign_jwt.py` and `tools/work_chain_record.py` ship with **zero default identity** — you supply your own seat-id, civ-id, and keypair-path (via CLI flags or `AGENTAUTH_SEAT` / `AGENTAUTH_CIV_ID` / `AGENTAUTH_KEYPAIR_PATH` env vars). The tools refuse to sign as anyone unless explicitly told who to sign as. Per-lead keypairs are a Phase-2 nicety, not a Phase-1 requirement — one civ-signer is enough; the runtime distinguishes leads inside one civ's identity via the `agent_id` field.
 2. **TGIM `/api/v1/events`** endpoint reachable. `work_chain_record.py` posts to TGIM at each tier-collapse; without it you get no audit wire. Default endpoint is `https://tgim-api.ai-civ.com`; override via `--tgim-api` flag or `TGIM_API` env var if you run your own.
 3. **The `mem/` tree** at your civ-repo root. Copy `mem-template/mem/` to `<your-repo>/mem/`. **Wire `tools/doctrine_guard.py` as a `pre-commit` hash-chain hook** over `mem/doctrine/`. Without the hook the doctrine layer is no longer immutable-versioned and the whole pipe becomes a lie.
-4. **A workflow runtime** capable of running JS workflow scripts — Claude Code with Opus 4.8 "Dynamic Workflows" is the tested substrate; adopters on different model substrates need an equivalent referee. `incarnation_runner.py` is what makes per-incarnation memory-isolation real; without it the guarantee evaporates.
+4. **Claude Code (latest) + Opus 4.8.** The workflow substrate IS Claude Code's Workflow / `agent()` tooling running on Opus 4.8. This is the ONLY supported substrate — no external model, no API key, no equivalent-referee-on-a-different-model path. `incarnation_runner.py` is what makes per-incarnation memory-isolation real; without it the guarantee evaporates. (A different-model auditor leg is reserved for **Phase-6 roadmap** — not in this distribution.)
 
 Lacking any of (1)–(4)? Don't adopt yet. Stand up the prereqs first (the bare TGIM mastery stack is a fine starting point). Layer this on top once you're ready.
 
-### Bring-your-own-AgentAUTH (substrate-independence note)
+### Bring-your-own-AgentAUTH (TGIM CIV-IDENTITY — the one independent axis)
 
-The originating civ shipped this layer with hardcoded references to its own seat-id, its own keypair paths, and a "cwd must equal the originating civ-root" gotcha. **That hardcoding has been removed.** The tools in this repo are substrate-independent: any adopter civ can sign as itself by providing its own three identity inputs (seat, civ-id, keypair-path). See `tools/work_chain_record.py` docstring for the full pattern (CLI flags + env vars + `record()` kwargs all supported).
+The runtime / workflow substrate is uniform: every adopter civ runs the same Claude Code + Opus 4.8. The **TGIM CIV-IDENTITY** is the single axis where adopters differ — each civ signs and posts to TGIM as itself, via its own keypair.
+
+The originating civ shipped this layer with hardcoded references to its own seat-id, its own keypair paths, and a "cwd must equal the originating civ-root" gotcha. **That hardcoding has been removed.** The identity tools in this repo accept bring-your-own identity: any adopter civ can sign as itself by providing its own three identity inputs (seat, civ-id, keypair-path). See `tools/work_chain_record.py` docstring for the full pattern (CLI flags + env vars + `record()` kwargs all supported).
 
 ---
 
@@ -185,17 +190,19 @@ aiciv-native-org/
 │   ├── incarnation_runner.py     The referee — inlined-memory + memory_delta gate
 │   ├── canon_append.py            Sole writer to mem/canon/<lead>/log.jsonl
 │   ├── doctrine_guard.py          Pre-commit hash-chain hook over mem/doctrine/
-│   ├── work_chain_record.py       TGIM event emitter at tier collapses (substrate-independent)
+│   ├── work_chain_record.py       TGIM event emitter at tier collapses (bring-your-own AgentAUTH identity)
 │   └── agentauth_sign_jwt.py      Generalized JWT signer (bring-your-own keypair)
 │
 ├── workflows/
-│   └── acg-coo.js            ← reference CEO/COO/specialist workflow (2 fixed bugs documented)
+│   ├── acg-coo.js            ← reference CEO/COO/specialist workflow (2 fixed bugs documented)
+│   └── digest-librarian.js   ← Phase-2 VALIDATED: agentic compress-not-create with auditor-isolation verify-gate
 │
-├── skills/                   ← 4 born-provisional SKILLs
+├── skills/                   ← 5 born-provisional SKILLs
 │   ├── team-launch-2/SKILL.md
 │   ├── provisional-skill-lifecycle/SKILL.md
 │   ├── acg-coo/SKILL.md
-│   └── workflow-js-mastery/SKILL.md
+│   ├── workflow-js-mastery/SKILL.md
+│   └── digest-librarian/SKILL.md
 │
 ├── team-leads/               ← runnable example manifest for the composition assembler
 │   └── example-lead/manifest.md
@@ -223,10 +230,12 @@ aiciv-native-org/
 
 ## What's on the roadmap (NOT in this repo yet — designed only)
 
-- **Agentic librarian** — replaces the extractive-ranker-v1 DIGEST rebuilder with a model-driven one. In-flight upstream; held until receipt lands.
 - **Phase-3 composition assembler** (`org-assembler.js`) — the generic workflow that reads `composition.yaml` and builds any org shape. Not started; `composition.yaml` is shipped as schema only.
 - **Composite lead manifests** (`coding-pm`, `marketing-vp`, `ux-lead`) — flagged as gaps in `composition.yaml`; Phase-3 assembler is designed to fail loudly until they're authored.
-- **Phase-5 dreamer-lead** — adversarial memory-consolidation pass, ideally driven by a *different-model* prior than the rest of the org (different-prior auditor = the "leg (a)" of structural independence). Designed in `spec/SPEC-SHEET-v0.2.md §6`; not started.
+- **Phase-5 dreamer-lead** — adversarial memory-consolidation pass on the local Opus-4.8 prior. Distinct from the librarian: librarian = low-order compress-not-create; dreamer = high-order pattern-draw across all memory. Designed in `spec/SPEC-SHEET-v0.2.md §6`; not started.
+- **Phase-6 different-model auditor** — a second model with an independent prior (different vendor / different family) running as the auditor. This is the "leg (a)" of structural independence. Reserved roadmap; until it ships, leg (a) is satisfied operationally by **auditor-isolation** (separate Opus-4.8 agent incarnations that never see each other's drafts) + TGIM cross-civ cross-grading.
+
+(Phase-2 agentic librarian is NO LONGER on this list — it's SHIPPED above as `workflows/digest-librarian.js`.)
 
 Federation-IP discipline: nothing in this repo depends on a roadmap item. If your use case depends on something on the roadmap, wait for the next push — don't fork the roadmap.
 

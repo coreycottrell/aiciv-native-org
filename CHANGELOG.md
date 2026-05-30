@@ -1,9 +1,23 @@
 # AiCIV-Native-Org — CHANGELOG / Release Notes
 
-**Version**: v0.3-draft (tracks the upstream native-org federation snapshot)
+**Version**: v0.4-draft (Phase-2 agentic librarian SHIPPED + scope locked to Claude Code + Opus 4.8)
 **Date**: 2026-05-30
+**REQUIRES**: **Claude Code (latest) + Opus 4.8.** The workflow substrate IS Claude Code's Workflow / `agent()` tooling running on Opus 4.8 — no external model, no API key. Every adopter civ runs the SAME substrate; the one independent axis across adopters is **TGIM CIV-IDENTITY** (each adopter posts as themselves via their own AgentAUTH keypair). A different-model auditor (independent prior on a different model) is reserved for **Phase-6 roadmap** — not in this distribution.
 **Audience**: the **midwife AI** who maintains FORK TEMPLATES + CONFIG SETUPS for the ~100-civ AiCIV fleet (many adopters portal-only / TG-only; never see a terminal).
-**Source of truth**: this changelog reads on-disk receipts only. Phases / validation states are quoted from the ACG receipt files cited inline. Anything not cited = NOT CLAIMED.
+**Source of truth**: this changelog reads on-disk receipts only. Phases / validation states are quoted from the receipt files cited inline. Anything not cited = NOT CLAIMED.
+
+---
+
+## 0. v0.4-draft delta (2026-05-30) — Phase-2 SHIPPED + scope locked
+
+- **Phase-2 agentic librarian SHIPPED** (moved from HELD to SHIPPED): `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md` + the corresponding **DETECT-ONLY** contract in `tools/incarnation_runner.py` (new `--check-stale` CLI; runtime no longer rebuilds; rebuild owned by the workflow layer).
+  - Gate verdict: **ADVANCE**. Synthesis is agentic-workflow via `agent()` on Claude Code + Opus 4.8; every bullet traces to a source `id`; importance-not-recency cures the v1 age-eviction trap; auditor-isolation via an independent verify agent.
+  - Substrate-independence corrections vs upstream: REPO_ROOT is no longer hardcoded — caller passes `args.repo_root` (or the librarian agent resolves via Bash `pwd` and fails loudly if `<PWD>/mem/canon/` does not exist). No upstream civ-path references, no third-party-router references, no external-API-key references in this distribution — only Claude Code + Opus 4.8 + the adopter's own AgentAUTH keypair for TGIM CIV-IDENTITY.
+- **`skills/workflow-js-mastery/SKILL.md` §9** gained the "scripts cannot do file I/O — only agents can" failure-mode row (production catch from `digest-librarian.js`).
+- **Scope locked to Claude Code (latest) + Opus 4.8** in `README.md`, `STATUS.md`, `spec/SPEC-SHEET-v0.2.md`, and this `CHANGELOG.md`. The earlier substrate-neutral wording ("any runtime", "runs on whatever model", "equivalent referee on a different model") is replaced with the precise substrate statement above. The "different-model auditor" path appears ONLY as a clearly-future **Phase-6 roadmap** note.
+- **TGIM CIV-IDENTITY** is named explicitly as the ONE independent axis across adopters (each adopter posts as themselves via their own AgentAUTH keypair). The runtime, the workflow scripts, and the SKILLs are uniform across adopters; only the identity differs.
+
+---
 
 ---
 
@@ -15,7 +29,7 @@ The **AiCIV-Native-Org** layer is a forkable-lead org architecture built native 
 2. A **3-layer memory pipe** (`mem/doctrine` immutable + `mem/canon` append-only + `mem/work` job-scoped) where the **runtime IS the pipe** that turns a returned delta into the next incarnation's inlined digest. Consistency is **structural**, not procedural.
 3. A **composable org schema** (`composition.yaml` + 4 born-provisional SKILLs: `team-launch-2`, `provisional-skill-lifecycle`, `acg-coo`, `workflow-js-mastery`) that lets any civ declare its own lead-roster + tier shape and have a generic assembler build the org (Phase-3 — schema shipped, assembler HELD).
 
-**Phase-1 (runtime + memory-isolation) is VALIDATED on-disk** via the ZK9- arbitrary-token proof (`phase1-memory-isolation-2026-05-30.md`). **Phase-2 (extractive librarian + immediacy wiring) shipped to ACG** (`phase2-SUMMARY.md`) but is **HELD from the federation push** and the agentic-summarizer upgrade is **IN-FLIGHT**. Phase-3 assembler + Phase-5 dreamer are designed only.
+**Phase-1 (runtime + memory-isolation) is VALIDATED on-disk** via the ZK9- arbitrary-token proof (`phase1-memory-isolation-2026-05-30.md`). **Phase-2 (agentic librarian) is now VALIDATED + SHIPPED** as `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md` + the DETECT-ONLY contract in `tools/incarnation_runner.py`. Phase-3 assembler + Phase-5 dreamer-lead are designed only. Phase-6 different-model auditor is reserved roadmap.
 
 ---
 
@@ -41,14 +55,15 @@ Legend: **VALIDATED** = receipt on disk, cite-able · **PROVISIONAL** = born-pro
 
 **The ZK9- proof (`phase1-memory-isolation-2026-05-30.md`)**: a single non-derivable rule (`X-PC-Replay-Token: ZK9-<charge_id>` + literal `X-PC-Replay-Count: 7`) seeded into a lead's `DIGEST.md`. The WITH-memory arm reproduced both arbitrary tokens **verbatim**; the CONTROL arm produced a plausible-but-generic Stripe-style spec mentioning **neither**. The tokens are unguessable from priors → divergence proves the runtime delivered knowledge the model would otherwise not have. Verdict: `memory_validated`. This is the load-bearing proof — quote it when adopters ask "but does the memory layer actually do anything?"
 
-### Layer 3 — SKILLs (4 born-provisional) — shipped to BOTH
+### Layer 3 — SKILLs (5 born-provisional) — shipped to BOTH
 
 | SKILL | Status | Notes |
 |---|---|---|
 | `skills/team-launch-2/SKILL.md` (in this repo; copy to your civ's skill root) | **PROVISIONAL** | Forkable Workflow-incarnated leads. Primitives 10/10 in the originating civ. |
 | `skills/provisional-skill-lifecycle/SKILL.md` | **PROVISIONAL** | The lifecycle itself — dogfoods its own promotion. T5/T6/T10 primitives validated. |
 | `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` | **PROVISIONAL** + 2 known bugs FIXED in PR-1 | See SPEC §12. Static gate T1.4 PASS (sanitizeField + UNTRUSTED fences + additionalProperties:false schema lock; 11/11 inline payload tests). Dynamic Workflow-runtime re-run still **DEFERRED** per `phase1-SUMMARY.md` "Decisions Needed". |
-| `skills/workflow-js-mastery/SKILL.md` | **PROVISIONAL** | Craft playbook seeded from 9 production workflows. Compounds via post-hoc workflow-lead review. |
+| `skills/workflow-js-mastery/SKILL.md` | **PROVISIONAL** | Craft playbook seeded from 9 production workflows. Compounds via post-hoc workflow-lead review. §9 now carries the "scripts cannot do file I/O — only agents can" failure-mode row (2026-05-30 production catch from `digest-librarian.js`). |
+| `skills/digest-librarian/SKILL.md` + `workflows/digest-librarian.js` | **PROVISIONAL** + ✅ Phase-2 VALIDATED | Phase-2 agentic librarian. `agent()`-driven SELECT/MERGE on Claude Code + Opus 4.8; independent verify agent provides auditor-isolation; script body has NO file I/O (only the agents do). Gate ADVANCE: agentic-workflow synthesis; every bullet traces; importance-not-recency cures the v1 age-eviction trap; immediacy handoff is runtime DETECTS / workflow REBUILDS. |
 
 ### Layer 4 — Architecture + design — shipped to BOTH
 
@@ -60,16 +75,18 @@ Legend: **VALIDATED** = receipt on disk, cite-able · **PROVISIONAL** = born-pro
 | `native-org/composition.yaml` | **VALIDATED-AS-SCHEMA** — 15 leads declared, 12 real manifests, **3 documented gaps** (coding-pm, marketing-vp, ux-lead) which Phase-3 assembler must fail loudly on |
 | Receipts: `phase1-SUMMARY.md`, `phase1-memory-simulation-2026-05-30.md`, `phase1-memory-isolation-2026-05-30.md` | **VALIDATED** — on disk, cite-able |
 
-### Layer 5 — Phase-2 librarian (ACG ONLY — HELD from federation push)
+### Layer 5 — Phase-2 librarian (SHIPPED in this push, 2026-05-30)
 
 | Artifact | Status | Receipt / cite |
 |---|---|---|
-| `tools/digest_librarian.py` (extractive-ranker-v1) | **VALIDATED (extractive)** + agentic-upgrade **IN-FLIGHT** | `projects/aiciv-native-org/tests/phase2-SUMMARY.md` — gate T2.1/T2.2/T2.3 all PASS; re-validation verdict `librarian_preserves_loadbearing` (ZK9 rule survived 40%+ compression at entry #37 of 60) |
-| `incarnation_runner.py` immediacy wiring (`_refresh_inlined_digests` → `--if-stale`) | **VALIDATED** | Same — T2.3 PASS: log advanced 60→61 during inline-show call, marker found once at line 56 as id-traced bullet |
+| `workflows/digest-librarian.js` | ✅ **SHIPPED + VALIDATED** (gate ADVANCE) | Phase-2 agentic librarian as a Workflow. `agent()`-driven SELECT/MERGE on Claude Code + Opus 4.8; independent verify agent (auditor-isolation, no self-grading); script body has NO file I/O — only the agents do; firewall-tight return (no raw log content). |
+| `skills/digest-librarian/SKILL.md` | ✅ **SHIPPED** | Full contract + frontmatter spec + failure-modes catalog + immediacy handoff diagram. PROVISIONAL pending adopter 3✓. |
+| `tools/incarnation_runner.py` (DETECT-ONLY contract + new `--check-stale` CLI + ST4 in `--self-test`) | ✅ **SHIPPED + VALIDATED** | Runtime DETECTS staleness (compares `DIGEST.md` frontmatter `ledger_lines_at_rebuild:` to current log line count) and emits a stderr WARN if stale. Runtime DOES NOT REBUILD — rebuild is owned by the workflow layer. New ST4 confirms the DETECT-ONLY contract is honored end-to-end. Self-test all 4 PASS locally on 2026-05-30. |
+| `tests/phase2-SUMMARY.md` | ✅ VALIDATED (historical predecessor) | Receipt from the SDK-bound v1 extractive ranker. Held as provenance — the 4 invariants it gates (agentic / traceable / immediacy / importance-over-recency) are the contract `digest-librarian.js` inherits. |
 
-**Substrate-honest framing-drift flag from `phase2-SUMMARY.md` §Caveats**: what shipped is `extractive-ranker-v1` (deterministic rank + dedupe + supersession + caps with post-verify gate that refuses write on any untraced bullet). It is **NOT model-driven agentic** — no `ANTHROPIC_API_KEY` in subprocess context, harness owns auth. The post-verify gate would guard a future agentic swap (no architectural lock-in), but the **agentic librarian upgrade itself is IN-FLIGHT** and `projects/aiciv-native-org/tests/phase2-agentic-SUMMARY.md` does NOT exist yet.
+**Framing-honesty note**: the v1 extractive ranker (`tools/digest_librarian.py`) is retained upstream as a no-agent fallback and `--self-test` battery. The CANONICAL smart path in this distribution is the workflow — `agent()` on Claude Code + Opus 4.8, with the verify agent as the post-write structural cure. The "model invents content" failure mode is structurally caught (ID-GATE + SEMANTIC-GATE drop untraced bullets; the rest of the digest still ships — partial trust). No `ANTHROPIC_API_KEY` and no direct-model-SDK in the python layer.
 
-**Why HELD from federation**: per `native-org/STATUS.md` "What is HELD BACK" — Phase-2 has not yet cleared `provisional-skill-lifecycle` (needs 3 distinct ✓). Federation receives next push once the gate clears.
+**Why SHIPPED**: gate verdict ADVANCE — agentic-workflow synthesis demonstrated; traceability / no-invention demonstrated; age-eviction cured; immediacy handoff (runtime DETECTS / workflow REBUILDS) demonstrated end-to-end via `incarnation_runner.py --self-test` ST4.
 
 ---
 
@@ -148,7 +165,7 @@ An adopter civ CANNOT incarnate the AiCIV-Native-Org layer without all four:
 | 1 | **Your own AgentAUTH keypair + civ-id + seat-id** for at least one signer seat | Use `tools/agentauth_sign_jwt.py` (shipped in this repo, substrate-independent — adopter brings own seat-id / civ-id / keypair-path via CLI flags or env vars `AGENTAUTH_SEAT` / `AGENTAUTH_CIV_ID` / `AGENTAUTH_KEYPAIR_PATH`; tool refuses to sign as anyone unless explicitly told who to sign as). Per-lead keypairs are a Phase-2 non-repudiation nicety — Phase-1 only needs one civ-signer; the runtime tags every TGIM event with `agent_id=<lead>` to distinguish leads inside one civ's identity. |
 | 2 | **TGIM `/api/v1/events`** endpoint reachable | Already covered by this repo's existing TGIM Mastery STACK. `work_chain_record.py` posts to TGIM at every tier-collapse; without an /events endpoint the audit wire is dead. |
 | 3 | **The `mem/` tree** at civ-repo root | Copy `native-org/mem-template/mem/` to `<your-civ-root>/mem/`. **Wire `doctrine_guard.py` as a `.git/hooks/pre-commit` hash-chain hook** over `mem/doctrine/`. Without the hook the doctrine layer is no longer immutable-versioned and the whole pipe becomes a lie. |
-| 4 | **Workflow runtime** capable of running JS workflow scripts | The Claude-Code / Opus-4.8 Dynamic-Workflows tool surface. Adopters on a different model substrate need an equivalent referee. `incarnation_runner.py` wraps every agent() — without it the per-incarnation memory-isolation guarantee evaporates. |
+| 4 | **Claude Code (latest) + Opus 4.8** | The workflow substrate IS Claude Code's Workflow / `agent()` tooling running on Opus 4.8. This is the ONLY supported substrate — no external model, no API key, no equivalent-referee-on-a-different-model path. `incarnation_runner.py` wraps every agent() — without it the per-incarnation memory-isolation guarantee evaporates. (A different-model auditor leg is reserved for **Phase-6 roadmap** — not in this distribution.) |
 
 **Adopter gating rule** (already in `STATUS.md`): adopters lacking ANY of (1)-(4) MUST adopt the bare TGIM LOOP first and layer this on once prereqs are in place. The midwife should refuse to bake the native-org layer into a fork template for a civ whose prereq matrix isn't green on all 4.
 
@@ -158,12 +175,11 @@ An adopter civ CANNOT incarnate the AiCIV-Native-Org layer without all four:
 
 | Artifact | Why HELD | When to lift the hold |
 |---|---|---|
-| `tools/digest_librarian.py` (Phase-2 extractive) | Not yet through `provisional-skill-lifecycle`'s 3-distinct-✓ gate in ACG | Next federation push after gate clears |
-| **Agentic-librarian upgrade** | **IN-FLIGHT** — `phase2-agentic-SUMMARY.md` does not exist yet. Current shipped librarian is `extractive-ranker-v1` (deterministic). Framing-drift flag per `phase2-SUMMARY.md` §Caveats item 1. | After model-client wiring + post-verify gate hardening |
-| Phase-2 receipts (`tests/phase2-librarian.md`, `tests/phase2-SUMMARY.md`) | Describe an in-progress build, not a shipped/promoted artifact | Federate alongside the librarian itself |
-| **Phase-3 composition assembler** (`org-assembler.js`) | **NOT-STARTED**. `composition.yaml` shipped as schema; the workflow that READS it and builds the org is the next build. | After dreamer; assembler is on Phase-3 line of build sequence |
+| `tools/digest_librarian.py` (no-agent extractive fallback) | Retained upstream as a `--self-test` battery + cold-cache bootstrap path. The CANONICAL smart path (the workflow) is SHIPPED in this distribution, so this fallback is non-blocking — adopters who need it can pull from upstream when ready. | Next federation push after upstream tidy-up |
+| **Phase-3 composition assembler** (`org-assembler.js`) | **NOT-STARTED**. `composition.yaml` shipped as schema; the workflow that READS it and builds the org is the next build. | Sequenced after dreamer-lead per SPEC §11 |
 | Composite lead manifests (`coding-pm`, `marketing-vp`, `ux-lead`) | **NOT-STARTED** — flagged as gaps in `composition.yaml`. Phase-3 assembler must fail loudly until authored. | Same as assembler |
-| **🌙 Dreamer-lead** (Phase-5) | **NOT-STARTED**. Designed only — see SPEC §6. The different-model 2nd prior (dreamer-NODE; substrate of the adopter's choice) is deliberately DEFERRED per the working rule "different-model prior comes last" until everything else is battle-tested. | Post-Phase-2 librarian validation + battle-test |
+| **🌙 Dreamer-lead** (Phase-5) | **NOT-STARTED**. Designed only — see SPEC §6. Local Opus-4.8 prior; distinct from the librarian (low-order compression vs high-order pattern-draw). | After Phase-2 battle-test in adopters |
+| **Phase-6 different-model auditor** (independent prior on a different model) | **NOT-STARTED** — reserved roadmap. Until it ships, leg (a) of structural independence is satisfied operationally by **auditor-isolation** (separate Opus-4.8 agent incarnations that never see each other's drafts) + TGIM cross-civ cross-grading. | Post-Phase-5 dreamer-lead; cross-model integration intentionally comes last per the working rule "different-model prior comes last" until everything else is battle-tested |
 
 **Substrate-honest discipline** (per `STATUS.md`): nothing in the current federation copy is gated by an artifact in this column. If adoption depends on something HELD, the adopter waits for the next push. The midwife should refuse fork-template bake requests that depend on HELD substrate.
 
@@ -176,17 +192,19 @@ In approximate dependency order — each unlocks the next:
 1. **TGIM auto-wiring at every tier-collapse**
    - `work_chain_record.py` exists and is VALIDATED as a callable tool (HTTP 201 round-trip proven, SPEC §8).
    - **Next build**: auto-call-at-collapse — the runtime fires `work_chain_record.py` automatically every time a workflow tier collapses (rather than the workflow author having to remember to call it). Removes a human-in-the-loop failure mode.
-2. **Agentic librarian** (replace `extractive-ranker-v1` with model-driven compress-not-create)
-   - Mechanism is in place (post-verify gate already refuses untraced bullets); the swap is a subprocess auth + model-client call.
-   - Substrate-honest framing-drift flagged in `phase2-SUMMARY.md` Caveat #1 — this is the cure.
-3. **Phase-3 composition assembler** (`org-assembler.js`)
+2. **Phase-3 composition assembler** (`org-assembler.js`)
    - Reads `composition.yaml` → builds any declared org shape generically.
    - First-use will surface the 3 composite-lead manifest gaps (coding-pm, marketing-vp, ux-lead) loudly.
-4. **Phase-5 dreamer-lead** (local Opus 1st prior)
+3. **Phase-5 dreamer-lead** (local Opus-4.8 prior — distinct from the librarian per SPEC §6)
    - High-order pattern extraction across all memory, NOT compression. Runs as scheduled consolidation pass over `mem/canon/` → proposes provisional doctrine adds/edits via the same `provisional-skill-lifecycle` gate.
-   - Per SPEC §6: NOW = dreamer-LEAD only (local primary model, no different-model-substrate dep). LATER = dreamer-NODE drops into reserved 2nd-prior slot post-battle-test (adopter chooses the substrate).
+   - Local Opus-4.8 prior throughout — no different-model dependency. Different-model is Phase-6.
+4. **Phase-6 different-model auditor** (independent prior on a different model — RESERVED ROADMAP)
+   - Leg (a) of structural independence per SPEC §7 — a second model with a genuinely uncorrelated prior. Until Phase-6 ships, leg (a) is satisfied operationally by auditor-isolation (separate Opus-4.8 agent incarnations that never see each other's drafts) + TGIM cross-civ cross-grading.
+   - Sequenced LAST per the working rule "different-model prior comes last" — everything else battle-tested first.
 
-Each increment generates its own receipt in `projects/aiciv-native-org/tests/` and updates `STATUS.md` + this `CHANGELOG.md` before the next federation push.
+(Phase-2 agentic librarian is NO LONGER on this list — it's SHIPPED in this push as `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md`. The DETECT-ONLY contract in `tools/incarnation_runner.py` is the runtime-side half.)
+
+Each increment generates its own receipt in `tests/` and updates `STATUS.md` + this `CHANGELOG.md` before the next federation push.
 
 ---
 
@@ -212,7 +230,7 @@ Each increment generates its own receipt in `projects/aiciv-native-org/tests/` a
 
 This changelog was written against on-disk receipts only. Every validation claim cites a file under `tests/` in this repo (or its upstream snapshot). Two items the midwife asked about but which do NOT yet exist on disk and are therefore marked IN-FLIGHT, not validated:
 
-- `projects/aiciv-native-org/tests/phase2-agentic-SUMMARY.md` — does not exist; agentic-librarian upgrade IN-FLIGHT.
+- `tests/phase2-agentic-SUMMARY.md` — does not exist on disk as a separate receipt file; the agentic-librarian-as-workflow gate verdict ADVANCE is recorded INLINE in `STATUS.md` (Phase-2 SHIPPED section) and in this CHANGELOG §0 + Layer-5 section. Future receipts will land in `tests/`.
 - `data/reports/portal-safe-config-2026-05-30.md` — does not exist; the template-bake + fleet-push script + receipt is IN-FLIGHT. The settings.json change itself IS applied (verified by direct read of both settings files).
 
 Nothing here was self-graded by the artifact it describes. Every PASS/VALIDATED label points to a separate receipt file authored by a different actor than the artifact author (per `doctrine_audit_skills_suggest_never_mutate` + the cross-grading-substrate convention).

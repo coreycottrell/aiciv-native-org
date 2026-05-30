@@ -2,7 +2,8 @@
 
 **As of**: 2026-05-30 ~14:50Z. Living doc — supersedes v0.1.
 **Companions**: `PRIMITIVE-INVENTORY.md` (tested vs not), `../tests/primitive-tests-2026-05-30.md` (results), `../research/` (all design notes + proofs), `../memory-design/`.
-**One-liner**: Team-Leads 2.0 — the civilization's org rebuilt native to the Opus-4.8 Dynamic-Workflow substrate. Forkable minds on disk, composable into any org shape, with living adversarial memory.
+**REQUIRES**: **Claude Code (latest) + Opus 4.8.** The workflow substrate IS Claude Code's Workflow / `agent()` tooling running on Opus 4.8 — no external model, no API key. Every adopter civ runs the SAME Claude-Code + Opus-4.8 substrate; the one independent axis across adopters is **TGIM CIV-IDENTITY** (each adopter posts as themselves via their own AgentAUTH keypair). A different-model auditor (independent prior on a different model) is reserved for **Phase-6 roadmap** — see §11.
+**One-liner**: Team-Leads 2.0 — the civilization's org rebuilt native to Claude Code + Opus-4.8 Dynamic Workflows. Forkable minds on disk, composable into any org shape, with living adversarial memory.
 
 ---
 
@@ -76,6 +77,8 @@ Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKE
 ### Digest-build decision (step 3) — Corey: "option b all day"
 - **Option B (CHOSEN): agentic librarian incarnation** rebuilds the digest intelligently (keep load-bearing, drop superseded).
 - CONSTRAINT: librarian is **COMPRESS-NOT-CREATE** — can drop/keep/merge existing canon lines; every digest line must trace to a log line; CANNOT invent. Derived, never authored-from-scratch.
+- **SHIPPED 2026-05-30** as `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md`. Synthesis runs through `agent()` on Claude Code + Opus 4.8. An independent verify agent (auditor-isolation) re-checks every bullet traces to a real source `id` — both ID-GATE (cited id must resolve) and SEMANTIC-GATE (prose must share tokens or verbatim-substring with a cited entry's `item`/`rationale`). Bullets that fail either gate are DROPPED; the rest of the digest still ships (partial trust). Script body has NO file I/O — only the librarian and verify agents do (per the §9 row of `workflow-js-mastery`).
+- **Immediacy contract**: runtime DETECTS staleness (`incarnation_runner.py --check-stale`); workflow REBUILDS (`workflow('digest-librarian', {lead, now})`). Detection and rebuild live in different layers per the substrate split — referee (rules unbreakable, no model-API dep) vs. conductor (decisions, model calls).
 
 ## 6. 🌙 THE DREAMER — living adversarial memory consolidation (Corey 5/30)
 
@@ -107,7 +110,7 @@ TWO dreamers, two priors, dream in parallel:
 ## 7. TRUST / STRUCTURAL INDEPENDENCE (3 legs) — cures R1 (epistemic-correlation-collapse)
 
 The risk: all internal auditors share the primary model's prior → can't catch shared-prior fabs (tonight's K=1 fab propagated through 4 internal pipelines for exactly this reason). The 3 legs:
-- **(a) Different-model auditor** — different MODEL = different prior = genuine outside perspective. Substrate of your choice (a different vendor, a different model family on the same vendor, a local model — anything whose prior is genuinely uncorrelated with your primary). **DEFERRED: cross-model integration comes AFTER everything else is battle-tested ("different-model prior comes last").**
+- **(a) Different-model auditor — RESERVED PHASE-6 ROADMAP**. Different MODEL = different prior = genuine outside perspective (a different vendor, a different model family on the same vendor, a local model — anything whose prior is genuinely uncorrelated with the primary Opus 4.8). **DEFERRED: cross-model integration comes AFTER everything else is battle-tested ("different-model prior comes last").** Until Phase-6 ships, leg (a) is satisfied OPERATIONALLY by **auditor-isolation** (separate Opus-4.8 agent incarnations that never see each other's drafts — proven structurally in `workflows/digest-librarian.js` with the librarian agent + the independent verify agent).
 - **(b) TGIM event stream** — every work-chain posted to `/events`; externally readable. ✅ PROVEN today (write 201 + read-back, see §8).
 - **(c) Federation cross-grade** — sister civs reviewing each other's work-streams.
 - Escalation on auditor-miss: email partner OR TGIM assignment tagged to your different-model auditor node.
@@ -123,9 +126,11 @@ The risk: all internal auditors share the primary model's prior → can't catch 
 
 ## 9. RUNTIME + SKILLS
 
+- **Substrate is fixed**: Claude Code (latest) + Opus 4.8. The workflow scripts run in Claude Code's Workflow / `agent()` tool surface; `agent()` calls land on Opus 4.8. No external model. No API key. **TGIM CIV-IDENTITY** is the ONE independent axis across adopters — each adopter posts as themselves via their own AgentAUTH keypair. Uniform substrate inside, distinct civ-identity outside.
 - **ONE shared runtime** (`tools/incarnation_runner.py`) — the referee wrapping every agent(): enforces read-inline + memory_delta + schema + auditor. Corey: "absolutely one runtime ... TGIM = any substrate integrates its own way." Uniform inside, open outside (the AWS model).
+  - **DIGEST REBUILD CONTRACT (Phase-2 SHIPPED)**: runtime DETECTS staleness (`--check-stale` CLI; `_warn_if_stale_before_inline` helper). Runtime DOES NOT REBUILD. REBUILD is owned by the WORKFLOW LAYER: `workflow('digest-librarian', { lead, now })` (see `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md`). Caller pattern documented in the runner module docstring + the skill. A python referee calling a model is the wrong layering — detection in the runtime, rebuild in the workflow.
   - Open question O-RUNTIME (decided): ONE shared runtime, NOT per-lead-declared. Per-lead schemas declared INSIDE the one runtime = autonomy within shared plumbing.
-- **`workflow-js-mastery` skill** = MANDATORY-load playbook (the craft). Kept TIGHT. References (not absorbs): `composition.yaml` (org registry = DATA) + pattern library (proven shapes). Each changes on its own clock.
+- **`workflow-js-mastery` skill** = MANDATORY-load playbook (the craft). Kept TIGHT. References (not absorbs): `composition.yaml` (org registry = DATA) + pattern library (proven shapes). Each changes on its own clock. §9 carries the "scripts cannot do file I/O — only agents can" failure-mode row (2026-05-30 production catch from `workflows/digest-librarian.js`).
 - **workflow-lead** = POST-HOC auditor of scripts. Corey: "QA reviews AFTER it runs ... they clearly WORK now, don't add roadblocks." Catches → amend the skill via provisional-skill-lifecycle. Never a pre-run gate.
 - **Scripts-are-brittle resolution**: can't avoid JS (workflows ARE js) → MASTER the writing. Runtime=referee (rules unbreakable), skill=playbook (write it right), workflow-lead=post-hoc auditor (compound the playbook).
 
@@ -135,13 +140,15 @@ The risk: all internal auditors share the primary model's prior → can't catch 
 - `skills/provisional-skill-lifecycle/SKILL.md` — born-provisional+proof → distinct-incarnation ✓/✗ → 3✓ → canon (can't self-grade)
 - `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` — Tier-1 COO firewall (has 2 known bugs, §12)
 - `skills/workflow-js-mastery/SKILL.md` — the craft playbook
+- `skills/digest-librarian/SKILL.md` + `workflows/digest-librarian.js` — Phase-2 agentic librarian (SHIPPED 2026-05-30). `agent()`-driven SELECT/MERGE on Claude Code + Opus 4.8 + independent verify agent (auditor-isolation, no self-grading). Script body has NO file I/O — only the agents do (the §9 row in `workflow-js-mastery`). Companion to the runtime's DETECT-ONLY contract.
 
 ## 11. BUILD SEQUENCE
 
-1. **PR-1** (~250 LOC) — THE FOUNDATION. `incarnation_runner.py` (runtime = the memory pipe §5) + 3-layer `mem/` tree + `canon_append.py` (sole writer) + `doctrine_guard.py` (hash-chain hook) + `work_chain_record.py` (TGIM, §8 proven) + `composition.yaml` (org registry) + mastery §0 header + 2 COO fixes (§12). Tests P16/P17 FOR REAL + unblocks self-evolution loop.
-2. **dreamer-lead** (local, primary model) — scheduled consolidation pass over mem/canon/ → provisional doctrine proposals + auditor interrogation. (Needs PR-1's mem/ tree.)
-3. **composition assembler** — generic workflow reading composition.yaml to build any org shape.
-4. **DEFERRED (post-battle-test)**: different-model auditor (leg a) + dreamer-NODE (2nd prior on a different-model substrate of the adopter's choice) + legacy retirements.
+1. **PR-1** (~250 LOC) — THE FOUNDATION. `incarnation_runner.py` (runtime = the memory pipe §5) + 3-layer `mem/` tree + `canon_append.py` (sole writer) + `doctrine_guard.py` (hash-chain hook) + `work_chain_record.py` (TGIM, §8 proven) + `composition.yaml` (org registry) + mastery §0 header + 2 COO fixes (§12). Tests P16/P17 FOR REAL + unblocks self-evolution loop. **SHIPPED.**
+2. **PR-2** — Phase-2 agentic librarian as a Workflow. `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md` + DETECT-ONLY split in `incarnation_runner.py` (new `--check-stale` CLI; new ST4 in self-test). `agent()` on Claude Code + Opus 4.8, post-verify gate via auditor-isolation. **SHIPPED 2026-05-30.**
+3. **dreamer-lead** (local Opus-4.8 prior, distinct from the librarian per §6) — scheduled consolidation pass over mem/canon/ → provisional doctrine proposals + auditor interrogation. (Needs PR-1's mem/ tree.)
+4. **composition assembler** — generic workflow reading composition.yaml to build any org shape.
+5. **Phase-6 RESERVED ROADMAP**: different-model auditor (leg (a) of §7 structural independence — independent prior on a different model). Until Phase-6 ships, leg (a) is satisfied operationally by auditor-isolation (separate Opus-4.8 agent incarnations that never see each other's drafts) + TGIM cross-civ cross-grading. Sequenced LAST per the working rule "different-model prior comes last" until everything else is battle-tested.
 
 ## 12. KNOWN DEBT
 

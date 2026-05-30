@@ -97,6 +97,7 @@ This skill is the **craft playbook** (how to write a workflow). It is intentiona
 | Prompt-injection via args | raw template-interpolation of caller `intent.goal`/constraints | sanitize/length-cap interpolated values; fence + escape |
 | Lost work on /tmp wipe | wrote artifacts to /tmp | write durable paths (data/reports, web dirs) |
 | OOM/freeze | parallel RAM-heavy renders | serialize audio/model-loading leaves |
+| `ReferenceError: read/write/fs is not defined` at script top-level | Workflow SCRIPTS run in a sandboxed JS context with **NO filesystem access** — there are no `read` / `write` / `fs` / `readFile` / `writeFile` globals available to the script body itself. Only AGENTS (via their Read/Write/Bash tools) can touch files. The author assumed `read()`/`write()` existed in script scope. | **Restructure so an agent does ALL file I/O.** The script body must only: validate args, invoke `agent()`s, return synthesis. Push every read/write into the agent's prompt with explicit instructions to use Read/Write/Bash. For auditor-isolation, use a SECOND verify agent that re-reads the file the first wrote and checks invariants. Real fix shipped in `workflows/digest-librarian.js` (2026-05-30). |
 
 ## §10 — QA loop (post-hoc, never a gate — Corey 2026-05-30)
 

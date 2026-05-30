@@ -22,12 +22,43 @@ This is the ONE shared runtime that wraps every agent incarnation. It:
 Single-writer discipline: only this runtime invokes canon_append.py from
 inside an incarnation. Other CLIs may run canon_append.py for bootstrap.
 
-CLI (Phase-1):
+DIGEST REBUILD CONTRACT (2026-05-30 detect-only split):
+  - This runtime DETECTS digest staleness (--check-stale + the warn-if-stale
+    helper invoked from assemble_inline_block).
+  - This runtime DOES NOT REBUILD.
+  - REBUILD is owned by the WORKFLOW LAYER. The org-assembler (or any
+    parent workflow that's about to incarnate a lead) invokes
+        workflow('digest-librarian', { lead, now })
+    for each stale lead BEFORE calling this runtime to assemble + run.
+  - The digest-librarian WORKFLOW (workflows/digest-librarian.js) does
+    agentic synthesis via agent() on the Claude-Code workflow runtime
+    (Opus 4.8 default). NO direct-model-SDK call from the python layer.
+    Federation-IP across any civ running the same Claude-Code + Opus-4.8
+    substrate; the only independent axis is TGIM CIV-IDENTITY (each
+    adopter posts as themselves via their own AgentAUTH keypair).
+  - tools/digest_librarian.py is RETAINED ONLY as a no-agent extractive
+    fallback (handy for --self-test and cold-cache bootstrap). The runtime
+    no longer invokes it from inline-block assembly. There is intentionally
+    NO direct-model-API agentic path in this python tool.
+  - See: skills/digest-librarian/SKILL.md  (full contract +
+    rationale + immediacy handoff diagram).
+
+CLI:
     python3 tools/incarnation_runner.py --self-test
         Builds an inline block for a fake lead, logs the assembled prompt
         to a file, exercises VALIDATE-RETURN with a return MISSING
         memory_delta (must REJECT) and one WITH it (must ACCEPT and trigger
         canon_append).
+
+    python3 tools/incarnation_runner.py --check-stale <lead> [--json]
+        Report whether mem/canon/<lead>/DIGEST.md lags its log. Exit 0 +
+        prints/JSON-emits {stale, log_lines, digest_ledger_lines, reason}.
+        DOES NOT REBUILD. The workflow layer reads this and invokes
+        workflow('digest-librarian', {lead, now}) when stale=true.
+
+    python3 tools/incarnation_runner.py --show-inline <lead> [--parent X] [--job Y]
+        Diagnostic — print the inline block that WOULD be assembled. If a
+        digest is stale, emits the WARN to stderr (no rebuild).
 
 The actual model-invocation seam is intentionally abstracted: tests inject
 a callable `model_fn(prompt:str)->str`. PR-1 ships the referee shape; later
@@ -69,11 +100,23 @@ MEM_CANON = MEM_DIR / "canon"
 MEM_WORK = MEM_DIR / "work"
 
 CANON_APPEND_SCRIPT = REPO_ROOT / "tools" / "canon_append.py"
-# Phase-2 librarian (Option B, COMPRESS-NOT-CREATE). The runtime invokes
-# this with --if-stale before READ assembles the inline block, so a DIGEST
-# lagging its log can never be silently inlined (short-horizon findings
-# would be invisible to the next incarnation otherwise — the immediacy gap).
-DIGEST_LIBRARIAN_SCRIPT = REPO_ROOT / "tools" / "digest_librarian.py"
+# Phase-2 NOTE (substrate-independent rebuild contract — 2026-05-30):
+# This runtime DETECTS digest staleness (see --check-stale CLI + _digest_is_stale
+# below), but it DOES NOT REBUILD. Rebuild is owned by the WORKFLOW LAYER
+# (org-assembler / parent workflow), which invokes the digest-librarian
+# WORKFLOW (workflows/digest-librarian.js) for each stale lead BEFORE
+# assemble_inline_block() reads the DIGEST. This split keeps the runtime
+# substrate-independent (no model-API dependency in python) and routes all
+# agentic synthesis through agent() on the workflow runtime's model — see
+# SPEC-SHEET-v0.2 §5 + §9 and skills/digest-librarian/SKILL.md.
+#
+# tools/digest_librarian.py is retained ONLY as a no-agent extractive
+# fallback (also useful for --self-test); the runtime no longer invokes it
+# from inline-block assembly. If you need a one-shot rebuild outside a
+# workflow context (cold cache, no workflow runtime up yet), run
+# `python3 tools/digest_librarian.py --lead <id> --now <ISO-Z> --force-extractive`
+# explicitly — the canonical smart path is workflow('digest-librarian').
+DIGEST_LIBRARIAN_SCRIPT = REPO_ROOT / "tools" / "digest_librarian.py"  # legacy / no-agent fallback path only
 
 # ~5k token budget (SPEC §5). 1 token ~= 4 chars heuristic → ~20_000 chars
 # is a safe ceiling. We truncate sections (doctrine + parent DIGEST first,
@@ -141,117 +184,150 @@ class IncarnationResult:
 # ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
-# Immediacy gap cure — DIGEST freshness gate
+# DIGEST FRESHNESS — DETECT ONLY (the runtime does NOT rebuild)
 # ---------------------------------------------------------------------------
 #
-# Phase-1 shipped a MECHANICAL placeholder digest rebuilt by canon_append.py
-# only on +50-line bumps. That left a window where a short-horizon finding
-# could land in the log but stay invisible to the next incarnation
-# (own DIGEST.md lagging the ledger). The next incarnation would inline a
-# STALE digest and never see the just-written line — the immediacy gap.
+# Contract (2026-05-30, SPEC-SHEET-v0.2 §5 + §9):
+#   - The runtime DETECTS staleness (helpers below + --check-stale CLI).
+#   - The runtime DOES NOT REBUILD.
+#   - REBUILD is owned by the WORKFLOW LAYER: the org-assembler (or any parent
+#     workflow that's about to incarnate a lead) invokes
+#         workflow('digest-librarian', { lead, now })
+#     for each stale lead BEFORE this runtime's assemble_inline_block() reads
+#     the DIGEST. The digest-librarian workflow does agentic synthesis via
+#     agent() on the Claude-Code workflow runtime (Opus 4.8 default) — no
+#     direct-model-SDK call from the python layer.
+#   - See: workflows/digest-librarian.js  +  skills/digest-librarian/SKILL.md
 #
-# Phase-2 cure: before READ assembles the inline block, invoke the librarian
-# in --if-stale mode for every DIGEST we're about to inline (own + parent).
-# --if-stale is cheap: it reads the existing DIGEST's frontmatter
-# `ledger_lines_at_rebuild:` and only triggers rebuild if it does not match
-# the current line count. Idempotent; no-op when fresh.
+# Why the split: the runtime is the REFEREE (rules unbreakable, narrow
+# surface, no model-API dep). The workflow is the CONDUCTOR (decisions,
+# model calls, decomposition). A python referee calling a model is the wrong
+# layering — that's the SDK-bound history we're cutting. Detection here,
+# rebuild in the workflow layer.
 #
-# Failure mode: librarian failure (verify error, missing log, etc.) is
-# logged to stderr but does NOT block the incarnation — we'd rather inline
-# a stale DIGEST than fail-closed and refuse to run. The librarian's own
-# verify gate prevents writing invented content, so "stale" is the only
-# degraded mode we tolerate.
+# Caller pattern (org-assembler or parent workflow):
+#
+#     for lead in leads_to_inline:
+#         stat = json.loads(run([
+#             'python3', 'tools/incarnation_runner.py',
+#             '--check-stale', lead, '--json'
+#         ]).stdout)
+#         if stat['stale']:
+#             await workflow('digest-librarian', { lead, now: iso_now() })
+#     # ...now safe to invoke the runtime for assemble + run.
+#
+# Failure mode: if the caller forgets to rebuild a stale DIGEST, the runtime
+# still inlines whatever's on disk and logs a stderr warning naming the
+# stale lead — better to run with a stale digest than fail-closed. The
+# warning is the only nudge; the workflow layer remains the rebuild owner.
 
-def _now_iso_for_librarian() -> str:
-    """Best-effort ISO-Z stamp passed to digest_librarian --now. Subprocess
-    clock access is sometimes unreliable inside sandboxes; the runtime owns
-    the stamp so the librarian doesn't have to re-derive it."""
-    return _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+# Sentinel + regex shared with the digest-librarian workflow's frontmatter.
+_DIGEST_FRONTMATTER_RE = __import__("re").compile(
+    r"^---\s*\n(?P<fm>.*?)\n---\s*\n", __import__("re").DOTALL
+)
+_FM_LEDGER_RE = __import__("re").compile(
+    r"^ledger_lines_at_rebuild:\s*(?P<n>\d+)\s*$", __import__("re").MULTILINE
+)
 
 
-def _rebuild_digest_if_stale(lead: str) -> dict:
-    """Invoke `digest_librarian.py --lead <lead> --if-stale --json` in-band.
-
-    Returns a small dict describing the outcome (for caller logging):
-        {"lead": ..., "skipped_fresh": bool, "rebuilt": bool,
-         "verify_errors": [...], "error": str|None}
-
-    Never raises — failures degrade to "kept stale DIGEST" (logged to stderr).
-    """
-    summary: dict = {
-        "lead": lead,
-        "skipped_fresh": False,
-        "rebuilt": False,
-        "verify_errors": [],
-        "error": None,
-    }
-    if not DIGEST_LIBRARIAN_SCRIPT.exists():
-        summary["error"] = f"digest_librarian.py missing at {DIGEST_LIBRARIAN_SCRIPT}"
-        sys.stderr.write(f"incarnation_runner: {summary['error']}\n")
-        return summary
-
-    # No log → nothing to rebuild from. Don't even invoke; cheap short-circuit.
-    log = MEM_CANON / lead / "log.jsonl"
-    if not log.exists():
-        summary["skipped_fresh"] = True  # treat absent as "trivially fresh"
-        return summary
-
+def _parse_digest_ledger_lines(digest_path: Path) -> Optional[int]:
+    """Return the frontmatter `ledger_lines_at_rebuild:` value, or None if
+    absent / malformed / DIGEST.md does not exist."""
+    if not digest_path.exists():
+        return None
     try:
-        proc = subprocess.run(
-            [
-                sys.executable,
-                str(DIGEST_LIBRARIAN_SCRIPT),
-                "--lead", lead,
-                "--if-stale",
-                "--now", _now_iso_for_librarian(),
-                "--json",
-            ],
-            cwd=str(REPO_ROOT),
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        summary["error"] = f"librarian invocation failed: {exc}"
-        sys.stderr.write(f"incarnation_runner: {summary['error']}\n")
-        return summary
-
-    # Always try to parse stdout (best-effort) — librarian emits JSON when
-    # --json is set; non-zero exit + verify errors come back on stderr.
-    payload = None
-    if proc.stdout.strip():
-        try:
-            payload = json.loads(proc.stdout.strip().splitlines()[-1])
-        except (json.JSONDecodeError, IndexError):
-            payload = None
-
-    if payload:
-        summary["skipped_fresh"] = bool(payload.get("skipped_fresh"))
-        summary["verify_errors"] = list(payload.get("verify_errors") or [])
-        summary["rebuilt"] = (not summary["skipped_fresh"]) and proc.returncode == 0
-
-    if proc.returncode != 0:
-        summary["error"] = (
-            f"librarian exit {proc.returncode}: stderr={proc.stderr.strip()!r}"
-        )
-        sys.stderr.write(
-            f"incarnation_runner: digest rebuild for {lead!r} failed "
-            f"(degrading to stale DIGEST): {summary['error']}\n"
-        )
-    return summary
+        text = digest_path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    m = _DIGEST_FRONTMATTER_RE.match(text)
+    if not m:
+        return None
+    fm = m.group("fm")
+    n = _FM_LEDGER_RE.search(fm)
+    if not n:
+        return None
+    try:
+        return int(n.group("n"))
+    except (ValueError, TypeError):
+        return None
 
 
-def _refresh_inlined_digests(spec: "IncarnationSpec") -> list[dict]:
-    """Run --if-stale rebuilds for every DIGEST about to be inlined.
+def check_digest_stale(lead: str) -> dict:
+    """Detect whether mem/canon/<lead>/DIGEST.md lags its log.
 
-    Order: own first (highest value, always present), then parent (if any).
-    Returns list of librarian summaries for caller logging.
+    Returns:
+        {
+          "lead": <id>,
+          "log_lines": <int>,                   # current line count in log.jsonl
+          "digest_ledger_lines": <int|None>,    # frontmatter value, or None if no digest
+          "stale": <bool>,                      # True if needs rebuild
+          "reason": <str>,                      # human-readable diagnostic
+        }
+
+    Staleness rules (in order):
+      - no log + no digest               → not stale (nothing to inline)
+      - no digest + log has lines        → stale (initial build needed)
+      - digest exists but no frontmatter → stale (corrupt; rebuild)
+      - digest_ledger_lines < log_lines  → stale (new entries appeared)
+      - digest_ledger_lines > log_lines  → stale (log shrank? corrupt; rebuild)
+      - equal                            → fresh
     """
-    summaries: list[dict] = []
-    summaries.append(_rebuild_digest_if_stale(spec.lead))
+    log_path = MEM_CANON / lead / "log.jsonl"
+    digest_path = MEM_CANON / lead / "DIGEST.md"
+    log_lines = _count_lines(log_path)
+    digest_ledger = _parse_digest_ledger_lines(digest_path)
+
+    if log_lines == 0 and not digest_path.exists():
+        return {
+            "lead": lead, "log_lines": 0, "digest_ledger_lines": None,
+            "stale": False, "reason": "no log + no digest (trivially fresh)",
+        }
+    if not digest_path.exists():
+        return {
+            "lead": lead, "log_lines": log_lines, "digest_ledger_lines": None,
+            "stale": True, "reason": "DIGEST.md does not exist; initial build needed",
+        }
+    if digest_ledger is None:
+        return {
+            "lead": lead, "log_lines": log_lines, "digest_ledger_lines": None,
+            "stale": True,
+            "reason": "DIGEST.md missing/malformed frontmatter `ledger_lines_at_rebuild:`",
+        }
+    if digest_ledger != log_lines:
+        return {
+            "lead": lead, "log_lines": log_lines, "digest_ledger_lines": digest_ledger,
+            "stale": True,
+            "reason": (
+                f"DIGEST.md ledger_lines_at_rebuild={digest_ledger} != "
+                f"current log_lines={log_lines}"
+            ),
+        }
+    return {
+        "lead": lead, "log_lines": log_lines, "digest_ledger_lines": digest_ledger,
+        "stale": False, "reason": "frontmatter ledger matches current log line count",
+    }
+
+
+def _warn_if_stale_before_inline(spec: "IncarnationSpec") -> list[dict]:
+    """Emit a STDERR warning for any DIGEST we're about to inline that is
+    stale. The runtime DOES NOT rebuild — see module-level contract. The
+    workflow layer is expected to have already invoked
+    workflow('digest-librarian', {lead, now}) for each stale lead BEFORE
+    calling the runtime. Returns the staleness reports for caller logging.
+    """
+    reports: list[dict] = [check_digest_stale(spec.lead)]
     if spec.parent_lead:
-        summaries.append(_rebuild_digest_if_stale(spec.parent_lead))
-    return summaries
+        reports.append(check_digest_stale(spec.parent_lead))
+    for r in reports:
+        if r["stale"]:
+            sys.stderr.write(
+                f"incarnation_runner: WARNING — DIGEST for lead {r['lead']!r} is "
+                f"STALE ({r['reason']}). The workflow layer should have invoked "
+                f"workflow('digest-librarian', {{lead: {r['lead']!r}, now: ...}}) "
+                f"before this incarnation. Inlining whatever is on disk; "
+                f"short-horizon findings may be invisible.\n"
+            )
+    return reports
 
 
 def _read_or_empty(path: Path, cap_chars: int) -> str:
@@ -296,13 +372,20 @@ def assemble_inline_block(spec: IncarnationSpec) -> str:
     (upstream context), then own DIGEST (load-bearing for THIS lead),
     then work brief (job-scoped).
 
-    Phase-2 immediacy cure: BEFORE reading any DIGEST, refresh any DIGEST
-    that lags its log via the librarian (`digest_librarian.py --if-stale`).
-    This guarantees a freshly-appended canon line is visible to the next
-    incarnation in the same process; closes the "short-horizon findings
-    invisible to --show-inline" gap. Cheap (--if-stale is a no-op when fresh).
+    Immediacy contract (2026-05-30 substrate-independent rebuild):
+    BEFORE reading any DIGEST we DETECT staleness (own + parent) and emit
+    a STDERR WARNING if stale. The runtime DOES NOT REBUILD — that's the
+    workflow layer's job. The org-assembler (or any parent workflow about
+    to incarnate this lead) is expected to have invoked
+        workflow('digest-librarian', { lead, now })
+    for each stale lead BEFORE calling the runtime. See module docstring
+    + skills/digest-librarian/SKILL.md for the full contract.
+
+    Degraded mode: if the workflow layer forgot, we still inline whatever
+    DIGEST is on disk (better stale than fail-closed) and the WARNING
+    surfaces the lapse for the post-hoc auditor (workflow-lead) to file.
     """
-    _refresh_inlined_digests(spec)
+    _warn_if_stale_before_inline(spec)
     parts = [INLINE_HEADER]
 
     parts.append(_section(
@@ -615,7 +698,7 @@ def run_incarnation(
 # ---------------------------------------------------------------------------
 
 def run_self_test() -> int:
-    """Three subtests:
+    """Four subtests:
       ST1. Build the inline block for a fake lead; log the assembled prompt
            to disk; grep-confirm the inline-header AND a known section line
            landed in the prompt file.
@@ -624,6 +707,10 @@ def run_self_test() -> int:
       ST3. Run end-to-end with a return WITH `memory_delta` → MUST be
            ACCEPTED and trigger canon_append.py (line count grows on
            mem/canon/_runner_selftest/log.jsonl).
+      ST4. check_digest_stale() correctly DETECTS staleness — after ST3
+           appended a line, frontmatter ledger_lines_at_rebuild no longer
+           matches → stale=True with a sane reason. (Confirms the runtime
+           does its DETECT-ONLY half of the workflow-layer rebuild contract.)
 
     Exit 0 = all pass; 1 = any fail. Prints a one-line verdict per subtest.
     """
@@ -633,12 +720,16 @@ def run_self_test() -> int:
 
     failures: list[str] = []
 
-    # Pre-seed: Phase-2 wires the librarian into assemble_inline_block, so
-    # a pre-written DIGEST gets OVERWRITTEN if it lags its log. Seed the
-    # marker via the LOG (canon_append), then let the librarian render the
-    # DIGEST from it — that's the librarian-correct path. (Pre-Phase-2 this
-    # block wrote the DIGEST directly; that contradicted librarian freshness
-    # and is why this test now seeds the log instead.)
+    # Pre-seed:
+    # The runtime no longer rebuilds DIGESTs (that's the workflow layer's job
+    # via workflow('digest-librarian')). So for the self-test we seed BOTH:
+    #   - one canon line via canon_append (so log.jsonl has content)
+    #   - a hand-rolled DIGEST.md with frontmatter matching log_lines=1 so
+    #     it's "fresh" — ST1 then asserts the inline block carries the marker
+    #     verbatim from that DIGEST.
+    # This isolates the runtime from the librarian: ST1 tests inline-block
+    # assembly + READ; the librarian's correctness is tested separately
+    # (workflows/digest-librarian.js + tools/digest_librarian.py --self-test).
     own_digest_marker = f"OWN-DIGEST-MARKER-{uuid.uuid4().hex[:8]}"
     parent_digest_marker = f"PARENT-DIGEST-MARKER-{uuid.uuid4().hex[:8]}"
     brief_marker = f"BRIEF-MARKER-{uuid.uuid4().hex[:8]}"
@@ -653,16 +744,31 @@ def run_self_test() -> int:
             kind="finding",
             item=f"runner-selftest seed {marker}",
             rationale=(
-                "Phase-1/2 runner self-test: seed a canon line so the "
-                "librarian renders a fresh DIGEST containing the marker "
-                "(immediacy-wiring verification)."
+                "Runner self-test: seed a canon line and hand-write a "
+                "matching DIGEST so the runtime's READ + warn-if-stale path "
+                "can be exercised without depending on the librarian."
             ),
         )
-        # Drop any stale DIGEST so the freshness gate triggers a rebuild;
-        # without this the test could pass against a leftover DIGEST.
-        stale_digest = MEM_CANON / lead_id / "DIGEST.md"
-        if stale_digest.exists():
-            stale_digest.unlink()
+        # Hand-roll a fresh DIGEST whose frontmatter matches the current
+        # log_lines, so check_digest_stale() reports fresh and the inline
+        # block injects the marker.
+        digest_path = MEM_CANON / lead_id / "DIGEST.md"
+        log_path = MEM_CANON / lead_id / "log.jsonl"
+        log_lines = _count_lines(log_path)
+        digest_path.write_text(
+            (
+                "---\n"
+                f"last_rebuilt_at: {_now_iso_utc()}\n"
+                f"ledger_lines_at_rebuild: {log_lines}\n"
+                f"lead: {lead_id}\n"
+                f"source_log: mem/canon/{lead_id}/log.jsonl\n"
+                "mechanism: agentic-workflow\n"
+                "---\n\n"
+                "## Canon (load-bearing first — agentic-workflow)\n\n"
+                f"- `id=selftest-seed` `2026-05-30T00:00:00Z` **finding** — runner-selftest seed {marker}\n"
+            ),
+            encoding="utf-8",
+        )
 
     (MEM_WORK / job_id).mkdir(parents=True, exist_ok=True)
     (MEM_WORK / job_id / "brief.md").write_text(
@@ -793,6 +899,50 @@ def run_self_test() -> int:
                     f"{parsed_last.get('id')}"
                 )
 
+    # ---------------- ST4: DETECT-ONLY staleness contract ----------------
+    # After ST3, the DIGEST frontmatter ledger_lines_at_rebuild is stale
+    # (still says 1, but log has post_lines=2). The runtime must REPORT
+    # stale=True with a clear reason. It must NOT rebuild — that's the
+    # workflow layer's job (workflow('digest-librarian', ...)).
+    st4_report = check_digest_stale(fake_lead)
+    if not st4_report.get("stale"):
+        failures.append(
+            f"ST4 expected stale=True after canon append, got {st4_report!r}"
+        )
+        print(f"FAIL ST4 detect: expected stale, got {st4_report!r}")
+    elif "ledger_lines_at_rebuild" not in st4_report.get("reason", "") and \
+            "missing" not in st4_report.get("reason", ""):
+        failures.append(
+            f"ST4 stale reason should mention ledger_lines_at_rebuild, "
+            f"got {st4_report!r}"
+        )
+        print(f"FAIL ST4 detect: reason unexpected: {st4_report!r}")
+    else:
+        # Also verify the DIGEST.md was NOT rebuilt (runtime is DETECT-only).
+        # We do that by re-reading the on-disk frontmatter and confirming
+        # ledger_lines_at_rebuild is still the PRE-append value.
+        on_disk_ledger = _parse_digest_ledger_lines(MEM_CANON / fake_lead / "DIGEST.md")
+        if on_disk_ledger is None:
+            failures.append("ST4 DIGEST.md frontmatter unreadable after detect")
+            print("FAIL ST4 detect: DIGEST.md frontmatter unreadable")
+        elif on_disk_ledger == post_lines:
+            failures.append(
+                f"ST4 runtime appears to have REBUILT the DIGEST "
+                f"(frontmatter ledger={on_disk_ledger} == post_lines); "
+                f"runtime must be DETECT-ONLY"
+            )
+            print(
+                f"FAIL ST4 detect: runtime rebuilt DIGEST (ledger now "
+                f"{on_disk_ledger}); workflow-layer contract violated"
+            )
+        else:
+            print(
+                f"PASS ST4 detect: stale correctly reported "
+                f"(log_lines={st4_report['log_lines']}, "
+                f"digest_ledger_lines={st4_report['digest_ledger_lines']}); "
+                f"runtime did NOT rebuild (DETECT-ONLY contract honored)"
+            )
+
     if failures:
         print(f"\nSELF-TEST FAILED ({len(failures)} subtest(s)):")
         for f in failures:
@@ -802,7 +952,8 @@ def run_self_test() -> int:
     print(
         "\nSELF-TEST PASSED — runtime referee shape is intact "
         "(inline-block assembled+logged, validator rejects missing "
-        "memory_delta, accepts well-formed, canon_append wrote)."
+        "memory_delta, accepts well-formed, canon_append wrote, "
+        "staleness detected without rebuild)."
     )
     return 0
 
@@ -846,8 +997,28 @@ def _build_parser() -> argparse.ArgumentParser:
         metavar="LEAD",
         help=(
             "Diagnostic: print the inlined-memory block that WOULD be "
-            "assembled for LEAD (no model invocation, no write)."
+            "assembled for LEAD (no model invocation, no write). Emits a "
+            "STDERR WARNING per stale DIGEST (own + parent); the workflow "
+            "layer is expected to have already invoked "
+            "workflow('digest-librarian', {lead, now}) for each stale lead."
         ),
+    )
+    p.add_argument(
+        "--check-stale",
+        metavar="LEAD",
+        help=(
+            "DETECT digest staleness for LEAD (no rebuild). Compares "
+            "mem/canon/<LEAD>/DIGEST.md frontmatter `ledger_lines_at_rebuild:` "
+            "against the current log line count. Exit 0 always; prints/JSON-emits "
+            "{lead, log_lines, digest_ledger_lines, stale, reason}. The workflow "
+            "layer reads this and invokes workflow('digest-librarian', {lead, now}) "
+            "when stale=true."
+        ),
+    )
+    p.add_argument(
+        "--json",
+        action="store_true",
+        help="Emit machine-readable JSON (used with --check-stale).",
     )
     p.add_argument(
         "--parent",
@@ -869,6 +1040,21 @@ def main(argv: list[str] | None = None) -> int:
     if args.self_test:
         return run_self_test()
 
+    if args.check_stale:
+        report = check_digest_stale(args.check_stale)
+        if args.json:
+            sys.stdout.write(json.dumps(report) + "\n")
+        else:
+            sys.stdout.write(
+                f"lead={report['lead']} stale={report['stale']} "
+                f"log_lines={report['log_lines']} "
+                f"digest_ledger_lines={report['digest_ledger_lines']} "
+                f"reason={report['reason']!r}\n"
+            )
+        # Always exit 0 — staleness is informational, not an error condition.
+        # The workflow layer interprets stale=true and invokes the rebuild.
+        return 0
+
     if args.show_inline:
         spec = IncarnationSpec(
             lead=args.show_inline,
@@ -876,10 +1062,11 @@ def main(argv: list[str] | None = None) -> int:
             job_id=args.job,
             task="(diagnostic — no task)",
         )
-        # assemble_inline_block() internally fires _refresh_inlined_digests
-        # (--if-stale librarian rebuild) for own + parent DIGESTs BEFORE
-        # reading them, so a freshly-appended canon line is never invisible
-        # to a --show-inline diagnostic. (Phase-2 immediacy cure.)
+        # assemble_inline_block() DETECTS staleness on own + parent and
+        # emits STDERR WARN per stale DIGEST. It does NOT rebuild — that's
+        # the workflow layer's job (workflow('digest-librarian', {lead, now})).
+        # If a freshly-appended canon line is missing from this diagnostic,
+        # the workflow-layer rebuild hasn't been wired into the caller yet.
         sys.stdout.write(assemble_inline_block(spec) + "\n")
         return 0
 
