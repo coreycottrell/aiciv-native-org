@@ -27,7 +27,7 @@ The **AiCIV-Native-Org** layer is a forkable-lead org architecture built native 
 
 1. A **shared runtime referee** (`incarnation_runner.py`) that wraps every agent() incarnation — enforces inlined-memory read, required `memory_delta` return, schema lock, and auditor handoff. Agents never type paths; agents never call Read.
 2. A **3-layer memory pipe** (`mem/doctrine` immutable + `mem/canon` append-only + `mem/work` job-scoped) where the **runtime IS the pipe** that turns a returned delta into the next incarnation's inlined digest. Consistency is **structural**, not procedural.
-3. A **composable org schema** (`composition.yaml` + 4 born-provisional SKILLs: `team-launch-2`, `provisional-skill-lifecycle`, `acg-coo`, `workflow-js-mastery`) that lets any civ declare its own lead-roster + tier shape and have a generic assembler build the org (Phase-3 — schema shipped, assembler HELD).
+3. A **composable org schema** (`composition.yaml` + 4 born-provisional SKILLs: `team-launch-2`, `provisional-skill-lifecycle`, `coo`, `workflow-js-mastery`) that lets any civ declare its own lead-roster + tier shape and have a generic assembler build the org (Phase-3 — schema shipped, assembler HELD).
 
 **Phase-1 (runtime + memory-isolation) is VALIDATED on-disk** via the ZK9- arbitrary-token proof (`phase1-memory-isolation-2026-05-30.md`). **Phase-2 (agentic librarian) is now VALIDATED + SHIPPED** as `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md` + the DETECT-ONLY contract in `tools/incarnation_runner.py`. Phase-3 assembler + Phase-5 dreamer-lead are designed only. Phase-6 different-model auditor is reserved roadmap.
 
@@ -37,7 +37,7 @@ The **AiCIV-Native-Org** layer is a forkable-lead org architecture built native 
 
 Legend: **VALIDATED** = receipt on disk, cite-able · **PROVISIONAL** = born-provisional per `provisional-skill-lifecycle`, needs 3 distinct ✓ in adopter substrate before canon · **IN-BUILD** = code exists, not yet gated · **HELD** = intentionally not in federation push · **NOT-STARTED** = designed only · **IN-FLIGHT** = work in progress at the time of this changelog
 
-### Layer 1 — Runtime (the referee) — shipped to BOTH ACG and federation repo
+### Layer 1 — Runtime (the referee) — shipped to BOTH originating civ and federation repo
 
 | Artifact | Status | Receipt |
 |---|---|---|
@@ -61,7 +61,7 @@ Legend: **VALIDATED** = receipt on disk, cite-able · **PROVISIONAL** = born-pro
 |---|---|---|
 | `skills/team-launch-2/SKILL.md` (in this repo; copy to your civ's skill root) | **PROVISIONAL** | Forkable Workflow-incarnated leads. Primitives 10/10 in the originating civ. |
 | `skills/provisional-skill-lifecycle/SKILL.md` | **PROVISIONAL** | The lifecycle itself — dogfoods its own promotion. T5/T6/T10 primitives validated. |
-| `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` | **PROVISIONAL** + 2 known bugs FIXED in PR-1 | See SPEC §12. Static gate T1.4 PASS (sanitizeField + UNTRUSTED fences + additionalProperties:false schema lock; 11/11 inline payload tests). Dynamic Workflow-runtime re-run still **DEFERRED** per `phase1-SUMMARY.md` "Decisions Needed". |
+| `skills/coo/SKILL.md` + `workflows/coo.js` | **PROVISIONAL** + 2 known bugs FIXED in PR-1 | See SPEC §12. Static gate T1.4 PASS (sanitizeField + UNTRUSTED fences + additionalProperties:false schema lock; 11/11 inline payload tests). Dynamic Workflow-runtime re-run still **DEFERRED** per `phase1-SUMMARY.md` "Decisions Needed". |
 | `skills/workflow-js-mastery/SKILL.md` | **PROVISIONAL** | Craft playbook seeded from 9 production workflows. Compounds via post-hoc workflow-lead review. §9 now carries the "scripts cannot do file I/O — only agents can" failure-mode row (2026-05-30 production catch from `digest-librarian.js`). |
 | `skills/digest-librarian/SKILL.md` + `workflows/digest-librarian.js` | **PROVISIONAL** + ✅ Phase-2 VALIDATED | Phase-2 agentic librarian. `agent()`-driven SELECT/MERGE on Claude Code + Opus 4.8; independent verify agent provides auditor-isolation; script body has NO file I/O (only the agents do). Gate ADVANCE: agentic-workflow synthesis; every bullet traces; importance-not-recency cures the v1 age-eviction trap; immediacy handoff is runtime DETECTS / workflow REBUILDS. |
 
@@ -94,7 +94,7 @@ Legend: **VALIDATED** = receipt on disk, cite-able · **PROVISIONAL** = born-pro
 
 **This is the part you own.** The runtime + memory + SKILLs above are code that adopters pull from the federation repo. The settings below are environment-level — they must be baked into every new-civ fork template and pushed to every existing-civ settings file.
 
-### 3a. Portal-safe permissions block (applied to ACG `~/.claude/settings.json` + project `.claude/settings.json` 2026-05-30)
+### 3a. Portal-safe permissions block (applied to originating civ's `~/.claude/settings.json` + project `.claude/settings.json` 2026-05-30)
 
 **WHY** (the load-bearing reason — write this verbatim into the fork-template docstring):
 > The Claude-Code widgets `AskUserQuestion` and `ExitPlanMode` render as interactive UI elements that **only work in a terminal session**. AiCIV adopters interact through Telegram bots and web portals — these adopters CANNOT respond to a widget. When a workflow / skill / subagent fires `AskUserQuestion`, the portal/TG session hangs indefinitely. `ExitPlanMode` has the same failure shape. **Denying both at the permissions layer is the structural cure** — instead of trusting every author to remember "don't use these in portal-mode," the harness refuses the call. The portal/TG bridge no longer hangs; the agent gets a permission-denied + must use a substrate alternative (TGIM event, inbox file, plain text reply).
@@ -130,7 +130,7 @@ Add this paragraph under the civ's existing safety / prohibitions section:
 
 ### 3c. Fleet-push script for existing civs (the mechanism — script itself IN-FLIGHT)
 
-**Status**: the portal-safe settings shipped to ACG manually on 2026-05-30. A `tools/fleet_push_portal_safe.sh` to roll the deny pair across all ~100 civ repos is **IN-FLIGHT** — `data/reports/portal-safe-config-2026-05-30.md` (the template-bake + fleet-push receipt) does not yet exist as of this changelog.
+**Status**: the portal-safe settings shipped to the originating civ manually on 2026-05-30. A `tools/fleet_push_portal_safe.sh` to roll the deny pair across all ~100 civ repos is **IN-FLIGHT** — `data/reports/portal-safe-config-2026-05-30.md` (the template-bake + fleet-push receipt) does not yet exist as of this changelog.
 
 **Mechanism the midwife should implement** (substrate-honest sketch — author the script + receipt before federating):
 
@@ -217,10 +217,10 @@ Each increment generates its own receipt in `tests/` and updates `STATUS.md` + t
   - `projects/aiciv-native-org/tests/phase1-SUMMARY.md`
   - `projects/aiciv-native-org/tests/phase1-memory-isolation-2026-05-30.md` (the ZK9- proof)
   - `projects/aiciv-native-org/tests/phase1-memory-simulation-2026-05-30.md` (wiring proof)
-- **Phase-2 receipt (ACG-only, HELD from federation)**:
+- **Phase-2 receipt (originating-civ-only, HELD from federation)**:
   - `projects/aiciv-native-org/tests/phase2-SUMMARY.md`
 - **Settings (where the deny pair lives)**:
-  - `~/.claude/settings.json` (user-level, applies to ACG Primary)
+  - `~/.claude/settings.json` (user-level, applies to ${CIV_NAME} Primary)
   - `<your-civ-root>/.claude/settings.json` (project-level)
 - **mem-template (copy to adopter civ root as `mem/`)**: `mem-template/mem/` (in this repo)
 
@@ -235,4 +235,4 @@ This changelog was written against on-disk receipts only. Every validation claim
 
 Nothing here was self-graded by the artifact it describes. Every PASS/VALIDATED label points to a separate receipt file authored by a different actor than the artifact author (per `doctrine_audit_skills_suggest_never_mutate` + the cross-grading-substrate convention).
 
-— Authored 2026-05-30 by ACG Primary per midwife-changelog directive.
+— Authored 2026-05-30 by ${CIV_NAME} Primary per midwife-changelog directive.

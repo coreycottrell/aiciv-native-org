@@ -16,7 +16,7 @@ Born 2026-05-30 inside ACG (A-C-Gee primary civ). Federation-IP. Adopt freely.
 |---|---|---|
 | **`tools/incarnation_runner.py`** | The referee. Wraps every `agent()` incarnation — inlines memory into the prompt, requires `memory_delta` on return, hands off to auditor. Agents never type paths; agents never call Read. | ✅ VALIDATED (`tests/phase1-SUMMARY.md`) |
 | **3-layer `mem/` pipe** (`doctrine` immutable + `canon` append-only + `work` ephemeral) | The runtime IS the pipe. Agent returns a delta → runtime appends → digest rebuilds → next incarnation reads it already-in-context. Consistency is **structural**, not procedural. | ✅ VALIDATED — ZK9 arbitrary-token proof (`tests/phase1-memory-isolation-2026-05-30.md`) |
-| **5 born-provisional SKILLs** (`team-launch-2`, `provisional-skill-lifecycle`, `acg-coo`, `workflow-js-mastery`, `digest-librarian`) | The playbooks. Forkable leads; self-evolution lifecycle; one composable CEO/COO/specialist seed; workflow-JS craft manual; agentic compress-not-create memory librarian. | ⚠️ PROVISIONAL — 3✓ in your civ to canon |
+| **5 born-provisional SKILLs** (`team-launch-2`, `provisional-skill-lifecycle`, `coo`, `workflow-js-mastery`, `digest-librarian`) | The playbooks. Forkable leads; self-evolution lifecycle; one composable CEO/COO/specialist seed; workflow-JS craft manual; agentic compress-not-create memory librarian. | ⚠️ PROVISIONAL — 3✓ in your civ to canon |
 | **`workflows/digest-librarian.js`** | Phase-2 librarian as a Workflow — `agent()`-driven SELECT/MERGE with an independent verify auditor; runtime DETECTS staleness (`--check-stale`) and the workflow REBUILDS. | ✅ VALIDATED (gate ADVANCE; agentic-workflow synthesis; traceable / no-invention; age-eviction cured) |
 | **`composition.yaml` + `spec/`** | Declarative org registry — any civ declares its own lead-roster + tier shape; a generic assembler (Phase-3, roadmap) reads this to build any org. | ✅ SCHEMA validated (assembler is roadmap) |
 
@@ -41,7 +41,7 @@ That's the whole pitch. Everything else is engineering rigor around making sure 
 ## Architecture in one diagram
 
 ```
-Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKER, not a workflow)
+${HUMAN_NAME} (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKER, not a workflow)
                        ⇄ COO (Tier-1, plans WITH Primary)
                              └─ Tier-1 VPs (workflows: decompose + command)
                                    └─ Tier-2 specialists (agents: domain doers; composable across VPs)
@@ -167,12 +167,12 @@ python3 tools/work_chain_record.py --self-test
 
 1. `skills/team-launch-2/SKILL.md` — what a forkable lead IS.
 2. `skills/workflow-js-mastery/SKILL.md` — how to write a workflow that incarnates one.
-3. `skills/acg-coo/SKILL.md` (+ `workflows/acg-coo.js`) — a working CEO/COO/specialist seed you can copy + rename.
+3. `skills/coo/SKILL.md` (+ `workflows/coo.js`) — a working CEO/COO/specialist seed you can copy + rename.
 4. `skills/provisional-skill-lifecycle/SKILL.md` — how new SKILLs (and yours) get promoted to canon without self-grading.
 
 ### 8. Fork your first lead
 
-Use `acg-coo` as the template. Rename, replace ACG's domain knowledge with yours, point `composition.yaml` at your manifest paths. Incarnate via the Workflow tool.
+Use `coo` as the template. Rename, replace the seed domain knowledge with yours, point `composition.yaml` at your manifest paths. Incarnate via the Workflow tool.
 
 ---
 
@@ -194,13 +194,13 @@ aiciv-native-org/
 │   └── agentauth_sign_jwt.py      Generalized JWT signer (bring-your-own keypair)
 │
 ├── workflows/
-│   ├── acg-coo.js            ← reference CEO/COO/specialist workflow (2 fixed bugs documented)
+│   ├── coo.js                ← reference CEO/COO/specialist workflow (2 fixed bugs documented)
 │   └── digest-librarian.js   ← Phase-2 VALIDATED: agentic compress-not-create with auditor-isolation verify-gate
 │
 ├── skills/                   ← 5 born-provisional SKILLs
 │   ├── team-launch-2/SKILL.md
 │   ├── provisional-skill-lifecycle/SKILL.md
-│   ├── acg-coo/SKILL.md
+│   ├── coo/SKILL.md
 │   ├── workflow-js-mastery/SKILL.md
 │   └── digest-librarian/SKILL.md
 │
@@ -270,8 +270,8 @@ Proprietary to the AiCIV federation (see LICENSE). © 2026 AiCIV Inc / Corey Cot
 
 - File an issue: https://github.com/coreycottrell/aiciv-native-org/issues
 - Federation hub: TGIM `/api/v1/events` (your civ's existing endpoint)
-- Direct: **Corey** is the steward; reach via TGIM if you're a federation civ.
+- Direct: **${HUMAN_NAME}** is the steward; reach via TGIM if you're a federation civ.
 
 ---
 
-*This repo is the public distribution of an internal ACG build. Source of truth canon lives in ACG (`projects/aiciv-native-org/`); this repo is the synced, validated, adopter-facing snapshot. See `CHANGELOG.md` for per-release deltas.*
+*This repo is the public distribution of the AiCIV-Native-Org architecture. See `CHANGELOG.md` for per-release deltas.*

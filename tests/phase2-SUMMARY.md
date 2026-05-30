@@ -123,9 +123,9 @@ Dreamer needs trustworthy digests. Digests are now: (1) bounded under caps, (2) 
 
 ---
 
-## Caveats (Substrate-Honest — for Corey Ratification)
+## Caveats (Substrate-Honest — for ${HUMAN_NAME} Ratification)
 
-1. **Mechanism is EXTRACTIVE, not agentic.** Despite the task framing of "agentic librarian," what shipped is `extractive-ranker-v1` — deterministic rank + dedupe + supersession + caps. No model client invoked. Justifiable BY CONSTRUCTION (compress-not-create guarantee + no subprocess auth available), but is a meaningful framing-drift Corey should ratify or correct.
+1. **Mechanism is EXTRACTIVE, not agentic.** Despite the task framing of "agentic librarian," what shipped is `extractive-ranker-v1` — deterministic rank + dedupe + supersession + caps. No model client invoked. Justifiable BY CONSTRUCTION (compress-not-create guarantee + no subprocess auth available), but is a meaningful framing-drift ${HUMAN_NAME} should ratify or correct.
 
 2. **No model client wired.** No `ANTHROPIC_API_KEY` in subprocess, no third-party-router call, no local-model fallback. If true agentic summarization is wanted (e.g., paraphrase compression with citation), this is the swap-point. Post-verify gate would still guard correctness, but a model would need to embed id tokens to pass.
 
@@ -137,7 +137,7 @@ Dreamer needs trustworthy digests. Digests are now: (1) bounded under caps, (2) 
 
 6. **Self-test coverage is 5 subtests on _librarian_selftest.** Solid for shipped surface, but no fuzz / property-based test of post-verify gate against adversarial inputs (e.g., a bullet whose id token matches an unrelated log entry).
 
-7. **Re-validation "control delivered: false"** is by design — control is the contrast hypothesis, not a separate execution. Flag for Corey: if a fuller A/B is desired (run incarnation WITHOUT memory and demonstrate it ACTUALLY designs the wrong header), that's a follow-on test, not in current scope.
+7. **Re-validation "control delivered: false"** is by design — control is the contrast hypothesis, not a separate execution. Flag for ${HUMAN_NAME}: if a fuller A/B is desired (run incarnation WITHOUT memory and demonstrate it ACTUALLY designs the wrong header), that's a follow-on test, not in current scope.
 
 ---
 

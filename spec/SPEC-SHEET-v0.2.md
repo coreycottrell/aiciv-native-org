@@ -16,7 +16,7 @@ This spec was derived over 2026-05-29→30 through ~12 adversarial workflow runs
 ## 1. TOPOLOGY
 
 ```
-Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKER, not a workflow)
+${HUMAN_NAME} (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKER, not a workflow)
                       ⇄ COO (Tier-1, plans WITH Primary)
                             └─ Tier-1 VPs (workflows: decompose + command)
                                   └─ Tier-2 specialists (agents: domain doers; composable across VPs)
@@ -33,7 +33,7 @@ Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKE
 - **Lead = persistent on-disk identity** (manifest + memory + skills).
 - **Agent = ephemeral incarnation OF that identity.**
 - A Tier-2 specialist is *a persistent lead-identity delivered as an agent incarnation* — has memory (disk), compounds (single-writer), no long-lived process. **Lead and agent are the SAME primitive at different lifecycle points.** Tier + posture are memory-fields, not types.
-- Resolves Corey's Q ("Tier-2: team-lead-with-memory OR agent we add memory to?"): they collapse into one. You don't choose.
+- Resolves ${HUMAN_NAME}'s Q ("Tier-2: team-lead-with-memory OR agent we add memory to?"): they collapse into one. You don't choose.
 
 ## 3. COMPOSITION (declarative)
 
@@ -46,11 +46,11 @@ Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKE
 
 - Only the top-level `return` reaches the caller. Raw fork output stays inside the workflow.
 - Compression STACKS per tier: specialists→VP→COO→Primary (→~400 tok). Proven: 268k→400 (COO), 202k→250 (composable-proof).
-- Harden structurally: return schemas use `additionalProperties:false` + `maxLength` so raw can't leak through extra fields. (Auditor caught acg-coo.js missing exactly this — 2 bugs, see §12.)
+- Harden structurally: return schemas use `additionalProperties:false` + `maxLength` so raw can't leak through extra fields. (Auditor caught coo.js missing exactly this — 2 bugs, see §12.)
 
 ## 5. MEMORY — THE PIPE (delta → inlined), structural consistency
 
-**The core question (Corey): "how will memory_delta turn into inlined memory?" — answered. The RUNTIME is the pipe. Agent only returns a delta + receives a digest; runtime owns the transform.**
+**The core question (${HUMAN_NAME}): "how will memory_delta turn into inlined memory?" — answered. The RUNTIME is the pipe. Agent only returns a delta + receives a digest; runtime owns the transform.**
 
 ```
 1. WRITE   agent returns  memory_delta:{canon_appends:[...], rationale}   (REQUIRED field; validator rejects return without it)
@@ -74,13 +74,13 @@ Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKE
 - **Harness owns ALL paths** → agents never type paths (kills inbox-path-drift bug class, catch #19).
 - ✅ TESTED (P16/P17): agent used only inlined memory (no Read tool), populated required memory_delta. SHAPE proven; the transform (step 2-4) needs the runtime (= PR-1).
 
-### Digest-build decision (step 3) — Corey: "option b all day"
+### Digest-build decision (step 3) — ${HUMAN_NAME}: "option b all day"
 - **Option B (CHOSEN): agentic librarian incarnation** rebuilds the digest intelligently (keep load-bearing, drop superseded).
 - CONSTRAINT: librarian is **COMPRESS-NOT-CREATE** — can drop/keep/merge existing canon lines; every digest line must trace to a log line; CANNOT invent. Derived, never authored-from-scratch.
 - **SHIPPED 2026-05-30** as `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md`. Synthesis runs through `agent()` on Claude Code + Opus 4.8. An independent verify agent (auditor-isolation) re-checks every bullet traces to a real source `id` — both ID-GATE (cited id must resolve) and SEMANTIC-GATE (prose must share tokens or verbatim-substring with a cited entry's `item`/`rationale`). Bullets that fail either gate are DROPPED; the rest of the digest still ships (partial trust). Script body has NO file I/O — only the librarian and verify agents do (per the §9 row of `workflow-js-mastery`).
 - **Immediacy contract**: runtime DETECTS staleness (`incarnation_runner.py --check-stale`); workflow REBUILDS (`workflow('digest-librarian', {lead, now})`). Detection and rebuild live in different layers per the substrate split — referee (rules unbreakable, no model-API dep) vs. conductor (decisions, model calls).
 
-## 6. 🌙 THE DREAMER — living adversarial memory consolidation (Corey 5/30)
+## 6. 🌙 THE DREAMER — living adversarial memory consolidation (${HUMAN_NAME} 5/30)
 
 **Memory must be AGENTIC + ADVERSARIAL FROM THE JUMP.** Two distinct roles — don't conflate:
 1. **Digest-librarian** (§5 step 3) = compress (low-order, constant, compress-not-create).
@@ -127,18 +127,18 @@ The risk: all internal auditors share the primary model's prior → can't catch 
 ## 9. RUNTIME + SKILLS
 
 - **Substrate is fixed**: Claude Code (latest) + Opus 4.8. The workflow scripts run in Claude Code's Workflow / `agent()` tool surface; `agent()` calls land on Opus 4.8. No external model. No API key. **TGIM CIV-IDENTITY** is the ONE independent axis across adopters — each adopter posts as themselves via their own AgentAUTH keypair. Uniform substrate inside, distinct civ-identity outside.
-- **ONE shared runtime** (`tools/incarnation_runner.py`) — the referee wrapping every agent(): enforces read-inline + memory_delta + schema + auditor. Corey: "absolutely one runtime ... TGIM = any substrate integrates its own way." Uniform inside, open outside (the AWS model).
+- **ONE shared runtime** (`tools/incarnation_runner.py`) — the referee wrapping every agent(): enforces read-inline + memory_delta + schema + auditor. ${HUMAN_NAME}: "absolutely one runtime ... TGIM = any substrate integrates its own way." Uniform inside, open outside (the AWS model).
   - **DIGEST REBUILD CONTRACT (Phase-2 SHIPPED)**: runtime DETECTS staleness (`--check-stale` CLI; `_warn_if_stale_before_inline` helper). Runtime DOES NOT REBUILD. REBUILD is owned by the WORKFLOW LAYER: `workflow('digest-librarian', { lead, now })` (see `workflows/digest-librarian.js` + `skills/digest-librarian/SKILL.md`). Caller pattern documented in the runner module docstring + the skill. A python referee calling a model is the wrong layering — detection in the runtime, rebuild in the workflow.
   - Open question O-RUNTIME (decided): ONE shared runtime, NOT per-lead-declared. Per-lead schemas declared INSIDE the one runtime = autonomy within shared plumbing.
 - **`workflow-js-mastery` skill** = MANDATORY-load playbook (the craft). Kept TIGHT. References (not absorbs): `composition.yaml` (org registry = DATA) + pattern library (proven shapes). Each changes on its own clock. §9 carries the "scripts cannot do file I/O — only agents can" failure-mode row (2026-05-30 production catch from `workflows/digest-librarian.js`).
-- **workflow-lead** = POST-HOC auditor of scripts. Corey: "QA reviews AFTER it runs ... they clearly WORK now, don't add roadblocks." Catches → amend the skill via provisional-skill-lifecycle. Never a pre-run gate.
+- **workflow-lead** = POST-HOC auditor of scripts. ${HUMAN_NAME}: "QA reviews AFTER it runs ... they clearly WORK now, don't add roadblocks." Catches → amend the skill via provisional-skill-lifecycle. Never a pre-run gate.
 - **Scripts-are-brittle resolution**: can't avoid JS (workflows ARE js) → MASTER the writing. Runtime=referee (rules unbreakable), skill=playbook (write it right), workflow-lead=post-hoc auditor (compound the playbook).
 
 ## 10. SHIPPED SKILLS (this build, all provisional, dogfooding their own lifecycle)
 
 - `skills/team-launch-2/SKILL.md` — forkable Workflow-incarnated leads
 - `skills/provisional-skill-lifecycle/SKILL.md` — born-provisional+proof → distinct-incarnation ✓/✗ → 3✓ → canon (can't self-grade)
-- `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` — Tier-1 COO firewall (has 2 known bugs, §12)
+- `skills/coo/SKILL.md` + `workflows/coo.js` — Tier-1 COO firewall (has 2 known bugs, §12)
 - `skills/workflow-js-mastery/SKILL.md` — the craft playbook
 - `skills/digest-librarian/SKILL.md` + `workflows/digest-librarian.js` — Phase-2 agentic librarian (SHIPPED 2026-05-30). `agent()`-driven SELECT/MERGE on Claude Code + Opus 4.8 + independent verify agent (auditor-isolation, no self-grading). Script body has NO file I/O — only the agents do (the §9 row in `workflow-js-mastery`). Companion to the runtime's DETECT-ONLY contract.
 
@@ -152,7 +152,7 @@ The risk: all internal auditors share the primary model's prior → can't catch 
 
 ## 12. KNOWN DEBT
 
-- `acg-coo.js` 2 bugs (auditor-found, NOT yet fixed — fix in PR-1):
+- `coo.js` 2 bugs (auditor-found, NOT yet fixed — fix in PR-1):
   1. MAJOR: prompt-injection via raw template-interpolation of caller `intent.goal`/`constraints` (lines 51-53, 69-72) — a goal string can override hardcoded constraints. Cure: sanitize/length-cap + fence/escape.
   2. MINOR: soft firewall — return schema lacks `additionalProperties:false` + `maxLength`; raw could smuggle through. Cure: lock the schema.
 

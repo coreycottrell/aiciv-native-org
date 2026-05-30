@@ -1,7 +1,7 @@
 # Phase-1 Memory Runtime — Isolation Verdict (POPULATED DIGEST arm)
 
 **Date**: 2026-05-30
-**Author**: acg-coo (sim-runner subagent)
+**Author**: coo (sim-runner subagent)
 **Scope**: When the DIGEST is **populated** with content that the base model could not derive from priors, does Phase-1's inlined-memory runtime deliver knowledge the model would otherwise not have? This is the missing complementary arm to `phase1-memory-simulation-2026-05-30.md`, which ran with empty DIGESTs and (correctly) reported `no_difference`.
 
 ---

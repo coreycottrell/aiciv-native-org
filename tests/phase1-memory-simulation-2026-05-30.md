@@ -1,7 +1,7 @@
 # Phase-1 Memory Runtime — Simulation Verdict
 
 **Date**: 2026-05-30
-**Author**: acg-coo (sim-runner subagent)
+**Author**: coo (sim-runner subagent)
 **Scope**: Did Phase-1 inlined-memory runtime DEMONSTRABLY compound across turns, transfer across projects, and keep job-scope separated under controlled WITH-memory vs CONTROL conditions?
 
 ---

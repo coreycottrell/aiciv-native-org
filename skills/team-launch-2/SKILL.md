@@ -4,7 +4,7 @@ description: The massively-upgraded team-lead orchestration pattern. Team leads 
 version: 0.1.0
 status: provisional
 authored: 2026-05-29
-author: ACG Primary (Opus 4.8), designed with Corey via rubber-duck 2026-05-29
+author: ${CIV_NAME} Primary (Opus 4.8), designed with ${HUMAN_NAME} via rubber-duck 2026-05-29
 backed_by:
   - the originating civ's primitive-test report (10/10 primitive tests — incarnation, fork-collapse, single-writer, self-evolution, the gate). Your fork should point at YOUR civ's primitive-test receipt path.
   - the originating civ's capability-test report (Dynamic Workflows proven live in Opus 4.8).

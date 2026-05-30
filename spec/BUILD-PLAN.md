@@ -1,6 +1,6 @@
 # AiCIV-Native Org — Phased Build + Test Plan
 
-**Author**: ACG Primary (Opus 4.8), 2026-05-30 ~15:00Z, pre-context-reset.
+**Author**: ${CIV_NAME} Primary (Opus 4.8), 2026-05-30 ~15:00Z, pre-context-reset.
 **Purpose**: a fresh post-reset session executes this COLD. Every phase = build steps (exact paths) + a TEST GATE that must pass before the next phase. No phase advances on a claim; only on an on-disk receipt.
 **Read first**: `spec/SPEC-SHEET-v0.2.md` (the what + why) and `spec/PRIMITIVE-INVENTORY.md` (tested vs not). This doc is the HOW + WHEN.
 **Discipline**: substrate-honest. Each test writes a receipt to `tests/` (in the adopter civ's repo). workflow-lead reviews scripts POST-HOC (never a pre-run gate). Cross-model auditor integration (different-prior 2nd substrate; adopter's choice of model/vendor) is DEFERRED to Phase 6+ — the working rule is "different-model prior comes last; everything else battle-tested first."
@@ -10,8 +10,8 @@
 ## STATE AT PLAN-TIME (what already exists — do NOT rebuild)
 
 ALREADY SHIPPED + ON DISK:
-- Skills: `skills/team-launch-2/SKILL.md`, `skills/provisional-skill-lifecycle/SKILL.md`, `skills/acg-coo/SKILL.md`, `skills/workflow-js-mastery/SKILL.md`
-- Mechanism: `workflows/acg-coo.js` (had 2 known bugs — fixed in Phase 1; see SPEC §12)
+- Skills: `skills/team-launch-2/SKILL.md`, `skills/provisional-skill-lifecycle/SKILL.md`, `skills/coo/SKILL.md`, `skills/workflow-js-mastery/SKILL.md`
+- Mechanism: `workflows/coo.js` (had 2 known bugs — fixed in Phase 1; see SPEC §12)
 - Spec + receipts: `spec/` (SPEC-SHEET-v0.2 + BUILD-PLAN + PRIMITIVE-INVENTORY), `tests/` (phase1 + phase2 receipts)
 - TGIM tooling: `tools/work_chain_record.py` + `tools/agentauth_sign_jwt.py` — TGIM write+readback PROVEN upstream; tools are substrate-independent (adopter brings own seat / civ-id / keypair)
 
@@ -41,20 +41,20 @@ ALREADY TESTED (13 primitives — don't re-test, see SPEC §15): incarnation, me
 2. `tools/canon_append.py` — SOLE writer to `mem/canon/<lead>/log.jsonl`. Append-only. Closed enum kind={finding|decision|retraction|doctrine-candidate}. After append, if log grew +50 lines since last DIGEST → trigger digest rebuild (Phase 2 owns the smart version; Phase 1 ships a MECHANICAL placeholder: last-200-lines).
 3. `tools/doctrine_guard.py` — pre-commit hook (wire into `.git/hooks/pre-commit` or `.claude/hooks/`): blocks in-place edits to `mem/doctrine/*` (hash-chain check); doctrine is immutable-versioned.
 4. Create the tree: `mem/doctrine/` (+ `INDEX.md`), `mem/canon/` (+ `.gitkeep`), `mem/work/` (+ `.gitkeep`). Add `mem/work/` to `.gitignore` (job-scoped, ephemeral).
-5. FIX `workflows/acg-coo.js` 2 bugs (SPEC §12): (a) sanitize/length-cap `intent.goal`+`intent.constraints` before template interpolation (lines ~51-53, 69-72) — fence+escape; (b) add `additionalProperties:false` + `maxLength` to the return schema (lines ~74-80).
+5. FIX `workflows/coo.js` 2 bugs (SPEC §12): (a) sanitize/length-cap `intent.goal`+`intent.constraints` before template interpolation (lines ~51-53, 69-72) — fence+escape; (b) add `additionalProperties:false` + `maxLength` to the return schema (lines ~74-80).
 6. Add `§0 MANDATORY-LOAD + companions` header to `skills/workflow-js-mastery/SKILL.md` pointing at `composition.yaml` (Phase 3) + a patterns index.
 
 **TEST GATE 1** (write receipt `tests/phase1-runtime.md`):
 - T1.1: run `incarnation_runner.py` on a trivial agent → confirm inlined-memory block was injected (grep the prompt log) AND return WITHOUT memory_delta is REJECTED, WITH is accepted.
 - T1.2: confirm `canon_append.py` appended a line to `mem/canon/<testlead>/log.jsonl` AND nothing else wrote there (single-writer).
 - T1.3: confirm `doctrine_guard.py` BLOCKS an in-place edit to a `mem/doctrine/` file.
-- T1.4: re-run acg-coo via Workflow → confirm the 2 bugs are gone (try a malicious `goal` string that previously could override constraints → now neutralized; confirm schema rejects extra fields).
+- T1.4: re-run coo via Workflow → confirm the 2 bugs are gone (try a malicious `goal` string that previously could override constraints → now neutralized; confirm schema rejects extra fields).
 - ADVANCE only if T1.1–T1.4 all pass on-disk.
 
 ---
 
 ## PHASE 2 — The Digest Librarian (Option B, compress-not-create)
-**Goal**: replace Phase-1's mechanical digest with the agentic librarian. Corey: "option b all day."
+**Goal**: replace Phase-1's mechanical digest with the agentic librarian. ${HUMAN_NAME}: "option b all day."
 
 **Build**:
 1. `workflows/digest-librarian.js` — a Workflow that, given a `mem/canon/<lead>/log.jsonl`, rebuilds `mem/canon/<lead>/DIGEST.md` (≤200 lines). CONSTRAINT (enforce in prompt + a post-check): every digest line must trace to a log line (compress-not-create; cannot invent). Frontmatter: `last_rebuilt_at`, `ledger_lines_at_rebuild`.

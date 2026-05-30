@@ -1,20 +1,20 @@
 ---
-name: acg-coo
-description: The COO seed — Primary's proxy / Chief-of-Staff. Primary (CEO) hands the COO ONE intent; the COO decomposes it, forks the work across team-lead incarnations, ABSORBS all raw results in its own context, and returns ONLY a synthesis (decisions-needed + one-line-per-lead + exceptions). Implemented as a one-level-nested Workflow so raw work-product never enters Primary's context. Use whenever Primary would otherwise fan out + read many raw results itself — i.e. almost all batch orchestration. (Named `acg-coo` because the seed was born inside the ACG civ; rename freely when you fork it for your civ.)
+name: coo
+description: The COO seed — Primary's proxy / Chief-of-Staff. Primary (CEO) hands the COO ONE intent; the COO decomposes it, forks the work across team-lead incarnations, ABSORBS all raw results in its own context, and returns ONLY a synthesis (decisions-needed + one-line-per-lead + exceptions). Implemented as a one-level-nested Workflow so raw work-product never enters Primary's context. Use whenever Primary would otherwise fan out + read many raw results itself — i.e. almost all batch orchestration.
 version: 0.1.0
 status: provisional
 authored: 2026-05-30
-author: ACG Primary (Opus 4.8), designed with Corey via rubber-duck 2026-05-29/30
+author: ${CIV_NAME} Primary (Opus 4.8), designed with ${HUMAN_NAME} via rubber-duck 2026-05-29/30
 backed_by:
   - design notes from the originating civ (your fork should point at YOUR civ's design-notes path)
 sibling_skills:
   - skills/team-launch-2/SKILL.md (forkable leads the COO commands)
   - skills/provisional-skill-lifecycle/SKILL.md (how the COO's skills self-evolve)
   - (your civ's CEO contract skill — replace this line with your own equivalent if you have one)
-mechanism: workflows/acg-coo.js (the runnable COO; Primary invokes via Workflow tool)
+mechanism: workflows/coo.js (the runnable COO; Primary invokes via Workflow tool)
 ---
 
-# acg-coo — The Tier-1 COO Seed
+# coo — The Tier-1 COO Seed
 
 > Primary doesn't read the firehose. The COO does. Primary reads the verdict.
 
@@ -26,10 +26,10 @@ The COO is "the single-writer rule applied to Primary." Cognition (the leads) pa
 
 ## Primary's shrunk world
 
-With acg-coo running, Primary's world collapses to **two operational relationships** (plus the creator):
+With the COO running, Primary's world collapses to **two operational relationships** (plus the creator):
 
-- **The creator / human** (Corey, in the originating civ — your steward, in yours)
-- **acg-coo** — the COO that proxies all batch orchestration
+- **The creator / human** (${HUMAN_NAME}, your steward)
+- **The COO** — the proxy that handles all batch orchestration
 
 Primary holds NO domain knowledge and almost no raw work-product. It thinks big, plans, hands intent down, judges what comes back.
 
@@ -37,10 +37,10 @@ Primary holds NO domain knowledge and almost no raw work-product. It thinks big,
 
 ## The mechanism: one-level-nested Workflow
 
-`acg-coo` runs AS a Workflow (the `mechanism` file). Inside, it calls `workflow()` per vertical (one level deep — children cannot nest further). Each child workflow forks its vertical-lead's incarnations, does the work, and returns a per-vertical synthesis to the COO. The COO reads ALL of those **in its own execution context**, dedupes/judges, and the top-level script returns **only the final synthesis** to Primary.
+The COO runs AS a Workflow (the `mechanism` file). Inside, it calls `workflow()` per vertical (one level deep — children cannot nest further). Each child workflow forks its vertical-lead's incarnations, does the work, and returns a per-vertical synthesis to the COO. The COO reads ALL of those **in its own execution context**, dedupes/judges, and the top-level script returns **only the final synthesis** to Primary.
 
 ```
-Primary (CEO)  ── ONE intent ──▶  Workflow: acg-coo  (COO)
+Primary (CEO)  ── ONE intent ──▶  Workflow: coo  (COO)
                                       │  workflow() per vertical  (1 level)
                                       ├─▶ child wf: infra-lead forks → synthesis
                                       ├─▶ child wf: research-lead forks → synthesis
@@ -84,7 +84,7 @@ If the COO returns raw agent transcripts, full reports inline, or more than one 
 
 | Anti-pattern | Why wrong | Right move |
 |---|---|---|
-| Primary fans out + reads raw results itself | the 900k-token bloat; CEO doing COO work | hand ONE intent to acg-coo; read its synthesis |
+| Primary fans out + reads raw results itself | the 900k-token bloat; CEO doing COO work | hand ONE intent to the COO; read its synthesis |
 | COO returns fat blobs / full transcripts | bloat just relocated to Primary | return synthesis schema only; artifacts = disk paths |
 | COO nests >1 level (workflow inside child) | throws — engine caps nesting at 1 | COO calls workflow() per vertical; children use agent()/parallel only |
 | COO guesses from vague intent | wrong work at scale | enforce the INTENT-IN contract; refuse underspecified goals |
@@ -94,11 +94,11 @@ If the COO returns raw agent transcripts, full reports inline, or more than one 
 
 | Work | Use the COO? |
 |---|---|
-| Batch orchestration: surveys, audits, builds, fan-outs across multiple verticals | **YES** — that's what acg-coo is for |
+| Batch orchestration: surveys, audits, builds, fan-outs across multiple verticals | **YES** — that's what the COO is for |
 | Live conversational VP you steer mid-task | NO — incarnations are fire-and-collect; use whatever live-steering substrate your civ has |
 | Single-vertical work where Primary can read the one result | NO — overkill; just invoke the one lead |
 
 ## Validation Log
 *(Provisional. Distinct incarnations that USE the COO append dated ✓/✗. 3 clean ✓ → canon.)*
 
-- 2026-05-30 ✓ Mechanism authored + first live proof run this session (see workflows/acg-coo.js). — ACG Primary (author note; does NOT count toward promotion per auditor-isolation)
+- 2026-05-30 ✓ Mechanism authored + first live proof run this session (see workflows/coo.js). — ACG Primary (author note; does NOT count toward promotion per auditor-isolation)

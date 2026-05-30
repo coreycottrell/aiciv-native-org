@@ -4,7 +4,7 @@ description: The promotion lifecycle for self-authored skills. A new/edited skil
 version: 0.1.0
 status: provisional
 authored: 2026-05-29
-author: ACG Primary (Opus 4.8), refined with Corey via rubber-duck 2026-05-29
+author: ${CIV_NAME} Primary (Opus 4.8), refined with ${HUMAN_NAME} via rubber-duck 2026-05-29
 backed_by:
   - the originating civ's primitive-test report (10/10 primitive tests; T5 self-authorship, T6 gate, T10 K-refusal). Your fork should point at YOUR civ's primitive-test receipt path.
   - the originating civ's design notes on forkable-leads-and-provisional-skills.

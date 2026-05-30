@@ -9,7 +9,7 @@
 | P2 | **Memory write-back** | incarnation writes a learning to disk | ✅ TESTED | 10-primitive T2 (1879-byte file written) |
 | P3 | **Fork** | one lead → N incarnations on slices | ✅ TESTED | 10-primitive T3 (5 distinct slices); overnight 6-vertical |
 | P4 | **Collapse / single-writer** | N forks → 1 synthesis, no write race | ✅ TESTED | 10-primitive T4 (5 proposals → 1 merge file) |
-| P5 | **Firewall / compression** | only synthesis returns to caller; raw stays inside | ✅ TESTED | acg-coo (268k→400 tok); composable-proof (202k→250) |
+| P5 | **Firewall / compression** | only synthesis returns to caller; raw stays inside | ✅ TESTED | coo (268k→400 tok); composable-proof (202k→250) |
 | P6 | **Context frugality at Primary** | Primary receives only the verdict | ⚠️ INFERRED | T9 measured raw, asserted Primary delta — not directly measured |
 | P7 | **Tier-1→Tier-2 nest** | Tier-1=workflow, Tier-2=agent(), 1 legal nest | ✅ TESTED | composable-proof (coding-PM → web+security) |
 | P8 | **Mandatory auditor reflex** | adversarial check before passing up | ✅ TESTED | composable-proof auditor caught 2 real COO bugs |

@@ -4,13 +4,13 @@ description: How to write bulletproof Opus-4.8 Dynamic Workflow scripts. The acc
 version: 0.1.0
 status: provisional
 authored: 2026-05-30
-author: ACG Primary (Opus 4.8) — seeded from ~9 workflows written 2026-05-29/30
+author: ${CIV_NAME} Primary (Opus 4.8) — seeded from ~9 workflows written 2026-05-29/30
 qa_owner: workflow-lead (post-hoc review, NOT a gate)
 backed_by:
-  - 9 production workflows from the originating session (opus-4.8 capability battery, 10-primitive battery, overnight-vertical, acg-coo, composable-proof, 5x3 adversarial, natural-substrate, and two crisis-investigation workflows). Your fork should append YOUR civ's production-workflow receipts as you accumulate them.
+  - 9 production workflows from the originating session (opus-4.8 capability battery, 10-primitive battery, overnight-vertical, coo, composable-proof, 5x3 adversarial, natural-substrate, and two crisis-investigation workflows). Your fork should append YOUR civ's production-workflow receipts as you accumulate them.
 sibling_skills:
   - skills/team-launch-2/SKILL.md
-  - skills/acg-coo/SKILL.md
+  - skills/coo/SKILL.md
   - skills/provisional-skill-lifecycle/SKILL.md
 ---
 
@@ -26,14 +26,14 @@ This skill is the **craft playbook** (how to write a workflow). It is intentiona
 - **`composition.yaml`** (at the repo root) — declarative list of every lead (id, domain, tier_default, commands, mandatory_auditor, manifest_path, posture). The generic assembler workflow (Phase 3 `org-assembler.js`) reads this file to incarnate ANY org shape. When you're writing a workflow that forks specialists, the ROSTER lives here — not in the script. Update this file, not your workflow, when org topology changes.
 
 **Companion 2 — the patterns INDEX (proven shapes):**
-- **`skills/workflow-js-mastery/patterns/`** — *TBD per SPEC §16 O1.* Will hold proven workflow shapes (fork-and-collapse, pipeline-with-auditor, composable-VP, etc.) as runnable example scripts indexed by use-case. Until that directory lands, treat the §2-§10 sections below + the production workflows in `workflows/` (acg-coo is the seeded example) as the de-facto pattern set. Format decision (skill vs `patterns/` dir) is OPEN (O1) — don't pre-fab structure.
+- **`skills/workflow-js-mastery/patterns/`** — *TBD per SPEC §16 O1.* Will hold proven workflow shapes (fork-and-collapse, pipeline-with-auditor, composable-VP, etc.) as runnable example scripts indexed by use-case. Until that directory lands, treat the §2-§10 sections below + the production workflows in `workflows/` (coo is the seeded example) as the de-facto pattern set. Format decision (skill vs `patterns/` dir) is OPEN (O1) — don't pre-fab structure.
 
 **Companion 3 — sibling skills (already listed in frontmatter, repeated here for load-order):**
 - `skills/team-launch-2/SKILL.md` — forkable Workflow-incarnated leads (the substrate this skill writes against).
-- `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` — worked example of a Tier-1 firewall (2 known bugs documented in SPEC §12; cures live in PR-1).
+- `skills/coo/SKILL.md` + `workflows/coo.js` — worked example of a Tier-1 firewall (2 known bugs documented in SPEC §12; cures live in PR-1).
 - `skills/provisional-skill-lifecycle/SKILL.md` — the gate amendments to THIS skill flow through (3 distinct ✓ → canon).
 
-**Discipline (Corey 2026-05-30): post-hoc review, never pre-run gate.** Workflows WORK now. workflow-lead reviews scripts AFTER they run, files catches, proposes amendments here. See §10.
+**Discipline (${HUMAN_NAME} 2026-05-30): post-hoc review, never pre-run gate.** Workflows WORK now. workflow-lead reviews scripts AFTER they run, files catches, proposes amendments here. See §10.
 
 **Spec anchor:** SPEC-SHEET-v0.2 §9 (Runtime + Skills) — "ONE shared runtime ... `workflow-js-mastery` skill = MANDATORY-load playbook (the craft). Kept TIGHT. References (not absorbs): `composition.yaml` (org registry = DATA) + pattern library (proven shapes). Each changes on its own clock."
 
@@ -63,7 +63,7 @@ This skill is the **craft playbook** (how to write a workflow). It is intentiona
 
 - **Return SYNTHESIS, not raw.** The classic bug I shipped: `return { results, report }` where `results` was the fat raw array → ballooned Primary to ~900k. The COO's whole job is to return a TIGHT object (headline + one-line-per-item + artifacts-as-paths).
 - **Hard rule**: the last `return` should be a small schema'd object. Raw agent outputs + full reports go to DISK (a synthesis agent writes them with file tools); the return carries only **pointers** (paths) + the verdict.
-- Harden the firewall structurally: on return schemas use `additionalProperties:false` + `maxLength` on free-text fields so a loose synthesis agent can't smuggle raw detail through. (Auditor caught acg-coo.js missing exactly this.)
+- Harden the firewall structurally: on return schemas use `additionalProperties:false` + `maxLength` on free-text fields so a loose synthesis agent can't smuggle raw detail through. (Auditor caught coo.js missing exactly this.)
 
 ## §5 — Nesting budget
 
@@ -99,11 +99,11 @@ This skill is the **craft playbook** (how to write a workflow). It is intentiona
 | OOM/freeze | parallel RAM-heavy renders | serialize audio/model-loading leaves |
 | `ReferenceError: read/write/fs is not defined` at script top-level | Workflow SCRIPTS run in a sandboxed JS context with **NO filesystem access** — there are no `read` / `write` / `fs` / `readFile` / `writeFile` globals available to the script body itself. Only AGENTS (via their Read/Write/Bash tools) can touch files. The author assumed `read()`/`write()` existed in script scope. | **Restructure so an agent does ALL file I/O.** The script body must only: validate args, invoke `agent()`s, return synthesis. Push every read/write into the agent's prompt with explicit instructions to use Read/Write/Bash. For auditor-isolation, use a SECOND verify agent that re-reads the file the first wrote and checks invariants. Real fix shipped in `workflows/digest-librarian.js` (2026-05-30). |
 
-## §10 — QA loop (post-hoc, never a gate — Corey 2026-05-30)
+## §10 — QA loop (post-hoc, never a gate — ${HUMAN_NAME} 2026-05-30)
 
 Workflows WORK now; do not add pre-run roadblocks. workflow-lead reviews scripts AFTER they run, files findings, and proposes amendments to THIS skill via provisional-skill-lifecycle (dated ✓/✗ in the Validation Log; 3 clean ✓ from distinct users → canon). Every brittle bug caught becomes a new §9 row. The skill compounds; the writer never waits.
 
 ## Validation Log
 *(Provisional. workflow-lead + distinct incarnations append dated ✓/✗ from POST-RUN reviews. 3 clean ✓ → canon.)*
 
-- 2026-05-30 ✓ Seeded from 9 production workflows; §3 + §4 + §6 are direct catches from real runs this session. — ACG Primary (author note; does NOT count toward promotion per auditor-isolation)
+- 2026-05-30 ✓ Seeded from 9 production workflows; §3 + §4 + §6 are direct catches from real runs this session. — ${CIV_NAME} Primary (author note; does NOT count toward promotion per auditor-isolation)

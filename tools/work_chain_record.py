@@ -155,8 +155,7 @@ def _sign_jwt(
     ]
     # NOTE: cwd is no longer hardcoded. The signer is path-resolved by flag,
     # not by walking from a specific civ-root — so cwd doesn't matter for
-    # keypair resolution. (This was the ACG-specific "cwd MUST = ACG root"
-    # gotcha; cured.)
+    # keypair resolution.
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(

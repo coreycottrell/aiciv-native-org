@@ -67,7 +67,7 @@ phases bolt real model adapters onto the seam.
 SPEC refs:
   - §5  memory pipe (READ→APPEND→DIGEST→INLINE→READ loop)
   - §7  trust / structural independence (validator-step)
-  - §9  one shared runtime (Corey: "absolutely one runtime")
+  - §9  one shared runtime (${HUMAN_NAME}: "absolutely one runtime")
   - §11 build sequence — this is PR-1's keystone
 """
 

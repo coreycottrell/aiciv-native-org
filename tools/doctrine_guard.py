@@ -69,7 +69,7 @@ from typing import Dict, List, Tuple
 
 # -- Configuration -----------------------------------------------------------
 
-REPO_ROOT = Path(__file__).resolve().parent.parent  # ACG/
+REPO_ROOT = Path(__file__).resolve().parent.parent  # repo root
 DOCTRINE_DIR = REPO_ROOT / "mem" / "doctrine"
 HASHES_FILE = DOCTRINE_DIR / ".hashes.json"
 

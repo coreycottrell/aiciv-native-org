@@ -10,7 +10,7 @@ backed_by:
   - tests/phase2-SUMMARY.md (4/4 PASS gate the v1 extractive librarian shipped against; the workflow rebuild preserves all four invariants — agentic, traceable, immediacy-via-runtime, importance-over-recency — without any direct-API SDK dependency in the python layer)
 sibling_skills:
   - skills/workflow-js-mastery/SKILL.md (the craft playbook — load before authoring/editing this workflow)
-  - skills/acg-coo/SKILL.md (sibling workflow; same firewall-tight-return pattern)
+  - skills/coo/SKILL.md (sibling workflow; same firewall-tight-return pattern)
   - skills/provisional-skill-lifecycle/SKILL.md (how this skill amends + promotes)
 spec_anchors:
   - SPEC-SHEET-v0.2 §5 — COMPRESS-NOT-CREATE; <=200 lines; <=8000 chars; importance-not-recency
@@ -152,5 +152,5 @@ The workflow's contract is testable through the same shapes the python `--self-t
 
 - Caller (immediacy): `tools/incarnation_runner.py` — DETECTS staleness only (--check-stale CLI); documents the workflow-layer rebuild contract in its module docstring.
 - Sole canon writer: `tools/canon_append.py` (the librarian never appends).
-- Sibling workflow shape: `workflows/acg-coo.js` (same firewall pattern; tight schema'd return; raw stays inside).
+- Sibling workflow shape: `workflows/coo.js` (same firewall pattern; tight schema'd return; raw stays inside).
 - Spec: `spec/SPEC-SHEET-v0.2.md` §5 + §6 + §9.
