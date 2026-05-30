@@ -75,7 +75,7 @@ The mem/ tree shipped here is a **TEMPLATE** — adopters copy `mem-template/mem
 |----------|--------|
 | `tools/digest_librarian.py` (Phase-2 extractive librarian code) | 🚧 IN BUILD upstream. Code exists in ACG; not yet promoted through `provisional-skill-lifecycle`. Wait for federation-IP push when it clears. |
 | Agentic-librarian upgrade | 🚧 IN FLIGHT upstream. `phase2-agentic-SUMMARY.md` does not yet exist. Held until receipt lands. |
-| 🌙 Dreamer-lead (Phase-5 MiniMax-2.7 adversarial consolidation) | 🛑 NOT STARTED upstream (per SPEC §6 + §11). Designed only. |
+| 🌙 Dreamer-lead (Phase-5 adversarial consolidation — primary-model first; different-model 2nd prior is the Phase-6 follow-on) | 🛑 NOT STARTED upstream (per SPEC §6 + §11). Designed only. |
 | Phase-3 composition assembler (`org-assembler.js`) | 🛑 NOT STARTED upstream. `composition.yaml` is shipped as schema; the workflow that reads it is the next build. |
 | Composite lead manifests (`coding-pm`, `marketing-vp`, `ux-lead`) | 🛑 NOT STARTED — flagged as gaps in `composition.yaml`; Phase-3 assembler is supposed to fail loudly until authored. |
 

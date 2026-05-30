@@ -1,6 +1,6 @@
 # AiCIV-Native-Org — CHANGELOG / Release Notes
 
-**Version**: v0.3-draft (tracks federation repo `hermes-as-aiciv-nodes` README header)
+**Version**: v0.3-draft (tracks the upstream native-org federation snapshot)
 **Date**: 2026-05-30
 **Audience**: the **midwife AI** who maintains FORK TEMPLATES + CONFIG SETUPS for the ~100-civ AiCIV fleet (many adopters portal-only / TG-only; never see a terminal).
 **Source of truth**: this changelog reads on-disk receipts only. Phases / validation states are quoted from the ACG receipt files cited inline. Anything not cited = NOT CLAIMED.
@@ -45,10 +45,10 @@ Legend: **VALIDATED** = receipt on disk, cite-able · **PROVISIONAL** = born-pro
 
 | SKILL | Status | Notes |
 |---|---|---|
-| `autonomy/skills/team-launch-2/SKILL.md` | **PROVISIONAL** | Forkable Workflow-incarnated leads. Primitives 10/10 in ACG. |
-| `autonomy/skills/provisional-skill-lifecycle/SKILL.md` | **PROVISIONAL** | The lifecycle itself — dogfoods its own promotion. T5/T6/T10 primitives validated. |
-| `autonomy/skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` | **PROVISIONAL** + 2 known bugs FIXED in PR-1 | See SPEC §12. Static gate T1.4 PASS (sanitizeField + UNTRUSTED fences + additionalProperties:false schema lock; 11/11 inline payload tests). Dynamic Workflow-runtime re-run still **DEFERRED** per `phase1-SUMMARY.md` "Decisions Needed". |
-| `autonomy/skills/workflow-js-mastery/SKILL.md` | **PROVISIONAL** | Craft playbook seeded from 9 production workflows. Compounds via post-hoc workflow-lead review. |
+| `skills/team-launch-2/SKILL.md` (in this repo; copy to your civ's skill root) | **PROVISIONAL** | Forkable Workflow-incarnated leads. Primitives 10/10 in the originating civ. |
+| `skills/provisional-skill-lifecycle/SKILL.md` | **PROVISIONAL** | The lifecycle itself — dogfoods its own promotion. T5/T6/T10 primitives validated. |
+| `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` | **PROVISIONAL** + 2 known bugs FIXED in PR-1 | See SPEC §12. Static gate T1.4 PASS (sanitizeField + UNTRUSTED fences + additionalProperties:false schema lock; 11/11 inline payload tests). Dynamic Workflow-runtime re-run still **DEFERRED** per `phase1-SUMMARY.md` "Decisions Needed". |
+| `skills/workflow-js-mastery/SKILL.md` | **PROVISIONAL** | Craft playbook seeded from 9 production workflows. Compounds via post-hoc workflow-lead review. |
 
 ### Layer 4 — Architecture + design — shipped to BOTH
 
@@ -101,7 +101,7 @@ Legend: **VALIDATED** = receipt on disk, cite-able · **PROVISIONAL** = born-pro
 - **User-level** (highest priority for portal adopters): `~/.claude/settings.json` — applies to every project the civ touches. **Required for portal/TG-only civs** because they may not have project-level configs.
 - **Project-level** (defense-in-depth): `<civ-repo>/.claude/settings.json` — same `permissions` block. Catches direct project invocations.
 
-ACG applied both layers on 2026-05-30. Confirmed live with `grep -A 8 '"permissions"' ~/.claude/settings.json /home/corey/projects/AI-CIV/ACG/.claude/settings.json` → both files show the deny pair.
+The originating civ applied both layers on 2026-05-30. Confirmed live with `grep -A 8 '"permissions"' ~/.claude/settings.json <your-civ-root>/.claude/settings.json` → both files show the deny pair.
 
 ### 3b. Heritable constitutional rule text (bake into every CLAUDE.md fork template)
 
@@ -145,7 +145,7 @@ An adopter civ CANNOT incarnate the AiCIV-Native-Org layer without all four:
 
 | # | Prereq | Where to source |
 |---|---|---|
-| 1 | **AgentAUTH keypair** for at least one signer seat | Use `tools/agentauth_sign_jwt.py` substrate already in `hermes-as-aiciv-nodes`. Per-lead keypairs are Phase-2 non-repudiation nicety — Phase-1 only needs one civ-signer; the runtime tags every TGIM event with `agent_id=<lead>` to distinguish leads inside one civ's identity. |
+| 1 | **Your own AgentAUTH keypair + civ-id + seat-id** for at least one signer seat | Use `tools/agentauth_sign_jwt.py` (shipped in this repo, substrate-independent — adopter brings own seat-id / civ-id / keypair-path via CLI flags or env vars `AGENTAUTH_SEAT` / `AGENTAUTH_CIV_ID` / `AGENTAUTH_KEYPAIR_PATH`; tool refuses to sign as anyone unless explicitly told who to sign as). Per-lead keypairs are a Phase-2 non-repudiation nicety — Phase-1 only needs one civ-signer; the runtime tags every TGIM event with `agent_id=<lead>` to distinguish leads inside one civ's identity. |
 | 2 | **TGIM `/api/v1/events`** endpoint reachable | Already covered by this repo's existing TGIM Mastery STACK. `work_chain_record.py` posts to TGIM at every tier-collapse; without an /events endpoint the audit wire is dead. |
 | 3 | **The `mem/` tree** at civ-repo root | Copy `native-org/mem-template/mem/` to `<your-civ-root>/mem/`. **Wire `doctrine_guard.py` as a `.git/hooks/pre-commit` hash-chain hook** over `mem/doctrine/`. Without the hook the doctrine layer is no longer immutable-versioned and the whole pipe becomes a lie. |
 | 4 | **Workflow runtime** capable of running JS workflow scripts | The Claude-Code / Opus-4.8 Dynamic-Workflows tool surface. Adopters on a different model substrate need an equivalent referee. `incarnation_runner.py` wraps every agent() — without it the per-incarnation memory-isolation guarantee evaporates. |
@@ -163,7 +163,7 @@ An adopter civ CANNOT incarnate the AiCIV-Native-Org layer without all four:
 | Phase-2 receipts (`tests/phase2-librarian.md`, `tests/phase2-SUMMARY.md`) | Describe an in-progress build, not a shipped/promoted artifact | Federate alongside the librarian itself |
 | **Phase-3 composition assembler** (`org-assembler.js`) | **NOT-STARTED**. `composition.yaml` shipped as schema; the workflow that READS it and builds the org is the next build. | After dreamer; assembler is on Phase-3 line of build sequence |
 | Composite lead manifests (`coding-pm`, `marketing-vp`, `ux-lead`) | **NOT-STARTED** — flagged as gaps in `composition.yaml`. Phase-3 assembler must fail loudly until authored. | Same as assembler |
-| **🌙 Dreamer-lead** (Phase-5) | **NOT-STARTED**. Designed only — see SPEC §6. MiniMax-2.7 2nd-prior is deliberately DEFERRED per Corey's "MiniMax comes last" rule until everything else is battle-tested. | Post-Phase-2 librarian validation + battle-test |
+| **🌙 Dreamer-lead** (Phase-5) | **NOT-STARTED**. Designed only — see SPEC §6. The different-model 2nd prior (dreamer-NODE; substrate of the adopter's choice) is deliberately DEFERRED per the working rule "different-model prior comes last" until everything else is battle-tested. | Post-Phase-2 librarian validation + battle-test |
 
 **Substrate-honest discipline** (per `STATUS.md`): nothing in the current federation copy is gated by an artifact in this column. If adoption depends on something HELD, the adopter waits for the next push. The midwife should refuse fork-template bake requests that depend on HELD substrate.
 
@@ -184,7 +184,7 @@ In approximate dependency order — each unlocks the next:
    - First-use will surface the 3 composite-lead manifest gaps (coding-pm, marketing-vp, ux-lead) loudly.
 4. **Phase-5 dreamer-lead** (local Opus 1st prior)
    - High-order pattern extraction across all memory, NOT compression. Runs as scheduled consolidation pass over `mem/canon/` → proposes provisional doctrine adds/edits via the same `provisional-skill-lifecycle` gate.
-   - Per SPEC §6: NOW = dreamer-LEAD only (local Opus, no MiniMax dep). LATER = dreamer-NODE drops into reserved 2nd-prior slot post-battle-test.
+   - Per SPEC §6: NOW = dreamer-LEAD only (local primary model, no different-model-substrate dep). LATER = dreamer-NODE drops into reserved 2nd-prior slot post-battle-test (adopter chooses the substrate).
 
 Each increment generates its own receipt in `projects/aiciv-native-org/tests/` and updates `STATUS.md` + this `CHANGELOG.md` before the next federation push.
 
@@ -193,8 +193,8 @@ Each increment generates its own receipt in `projects/aiciv-native-org/tests/` a
 ## Appendix A — File paths the midwife should bookmark
 
 - **Spec**: `projects/aiciv-native-org/spec/SPEC-SHEET-v0.2.md`
-- **Federation status manifest (READ FIRST)**: `projects/hermes-as-aiciv-nodes/native-org/STATUS.md`
-- **Federation README header version**: `projects/hermes-as-aiciv-nodes/README.md` (v0.3-draft)
+- **Federation status manifest (READ FIRST)**: `STATUS.md` (in this repo)
+- **Federation README header version**: `README.md` (v0.3-draft)
 - **Phase-1 receipts**:
   - `projects/aiciv-native-org/tests/phase1-SUMMARY.md`
   - `projects/aiciv-native-org/tests/phase1-memory-isolation-2026-05-30.md` (the ZK9- proof)
@@ -203,14 +203,14 @@ Each increment generates its own receipt in `projects/aiciv-native-org/tests/` a
   - `projects/aiciv-native-org/tests/phase2-SUMMARY.md`
 - **Settings (where the deny pair lives)**:
   - `~/.claude/settings.json` (user-level, applies to ACG Primary)
-  - `/home/corey/projects/AI-CIV/ACG/.claude/settings.json` (project-level)
-- **mem-template (copy to adopter civ root as `mem/`)**: `projects/hermes-as-aiciv-nodes/native-org/mem-template/mem/`
+  - `<your-civ-root>/.claude/settings.json` (project-level)
+- **mem-template (copy to adopter civ root as `mem/`)**: `mem-template/mem/` (in this repo)
 
 ---
 
 ## Appendix B — Substrate-honest discipline note
 
-This changelog was written against on-disk receipts only. Every validation claim cites a file under `projects/aiciv-native-org/tests/` or `projects/hermes-as-aiciv-nodes/native-org/`. Two items the midwife asked about but which do NOT yet exist on disk and are therefore marked IN-FLIGHT, not validated:
+This changelog was written against on-disk receipts only. Every validation claim cites a file under `tests/` in this repo (or its upstream snapshot). Two items the midwife asked about but which do NOT yet exist on disk and are therefore marked IN-FLIGHT, not validated:
 
 - `projects/aiciv-native-org/tests/phase2-agentic-SUMMARY.md` — does not exist; agentic-librarian upgrade IN-FLIGHT.
 - `data/reports/portal-safe-config-2026-05-30.md` — does not exist; the template-bake + fleet-push script + receipt is IN-FLIGHT. The settings.json change itself IS applied (verified by direct read of both settings files).

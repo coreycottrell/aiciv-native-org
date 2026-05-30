@@ -1,8 +1,23 @@
-# AiCIV-Native Org — Declarative Composition Registry
+# AiCIV-Native Org — Declarative Composition Registry (TEMPLATE)
+#
+# THIS IS A TEMPLATE. The single `example-lead` below is a placeholder so the
+# Phase-3 assembler workflow has something real to point at out of the box.
+# When you adopt this layer in your own civ:
+#
+#   1. Delete the example-lead block (or rename it).
+#   2. Add one entry per real team-lead your civ runs — using the schema below.
+#   3. Set `manifest_path` to the on-disk path of that lead's manifest in
+#      YOUR repo (the assembler resolves it against your civ-repo root, not
+#      the originating civ's root).
+#
+# The originating civ ran ~15 leads here (a COO + ~10 vertical VPs +
+# composites like coding-pm / marketing-vp). That whole roster lived in
+# THIS file in the upstream snapshot. It has been intentionally stripped —
+# the org topology is YOUR org's topology, not the originating civ's.
 #
 # Purpose: the org REGISTRY (data, not code). A generic assembler workflow
 # reads this file to incarnate ANY org shape from manifests on disk.
-# See SPEC-SHEET-v0.2.md §3 (composition) + §1 (topology) + §11 (build sequence).
+# See spec/SPEC-SHEET-v0.2.md §3 (composition) + §1 (topology) + §11 (build sequence).
 #
 # Schema per lead:
 #   id:                 stable lead identifier (slug, kebab-case)
@@ -16,177 +31,46 @@
 #   mandatory_auditor:  bool. If true, the assembler MUST fire an auditor
 #                       (witness != producing_lead) before this lead's collapse
 #                       returns upward. See SPEC §5 + §7.
-#   manifest_path:      ACG-root-relative path to the on-disk manifest.
-#                       Resolved against /home/corey/projects/AI-CIV/ACG.
-#                       NULL = manifest gap (lead exists in registry but no
-#                       manifest on disk yet — assembler must fail loudly per
-#                       TEST GATE 3 T3.3).
+#   manifest_path:      adopter-civ-root-relative path to the on-disk manifest.
+#                       Resolved against the adopter civ's repo root (NOT the
+#                       originating civ's root). NULL = manifest gap (lead
+#                       exists in registry but no manifest on disk yet —
+#                       assembler must fail loudly per TEST GATE 3 T3.3).
+#                       A runnable example manifest ships at
+#                       `team-leads/example-lead/manifest.md` so the assembler
+#                       has something real to point at on first clone.
 #   posture:            free-text behavioral tilt (e.g. "adversarial",
 #                       "synthesizer", "executor"). Memory-field, not a type.
 #
 # DO NOT EDIT casually — this is the org topology. Changes ship via the same
 # provisional-skill-lifecycle as any other doctrine artifact.
 #
-# Companion: autonomy/skills/workflow-js-mastery/SKILL.md (the craft) — this
+# Companion: skills/workflow-js-mastery/SKILL.md (the craft) — this
 # file is the DATA the skill's patterns operate over.
 
 version: 0.1.0
 authored: 2026-05-30
-spec_ref: projects/aiciv-native-org/spec/SPEC-SHEET-v0.2.md
+spec_ref: spec/SPEC-SHEET-v0.2.md
 build_phase: 1  # PR-1 / Phase 1 per BUILD-PLAN.md
 
 # ─────────────────────────────────────────────────────────────────────────────
-# SEED COMPOSITE LEADS (BUILD-PLAN.md Phase 3 seed examples)
-# These are NEW composite Tier-1 VPs that command existing real leads as
-# Tier-2 specialists — proving the "tier is positional" claim.
+# EXAMPLE LEAD — replace with your own verticals' manifests.
+#
+# This single entry exists so the Phase-3 assembler workflow has a real,
+# resolvable manifest to point at out of the box. The manifest file lives at
+# `team-leads/example-lead/manifest.md` in this repo. Use it as the template
+# when you author your own lead manifests.
 # ─────────────────────────────────────────────────────────────────────────────
 
 leads:
 
-  - id: coding-pm
-    domain: ship code projects end-to-end (plan → build → security-review → release)
+  - id: example-lead
+    domain: REPLACE THIS — a one-line description of YOUR lead's accountability
     tier_default: 1
-    commands:
-      - web-lead
-      - security-lead
+    commands: []          # add child-lead ids here once you author them
     mandatory_auditor: true
-    # GAP: no manifest on disk yet — composite VP seeded in registry first;
-    # manifest authoring is queued behind PR-1 (Phase 3 assembler will
-    # fail loudly per T3.3 until this is filled).
-    manifest_path: null
-    posture: synthesizer-with-adversarial-gate
-
-  - id: marketing-vp
-    domain: customer-facing narrative + landing pages + UX storytelling
-    tier_default: 1
-    commands:
-      - web-lead
-      - ux-lead
-    mandatory_auditor: true
-    # GAP: no manifest on disk — see coding-pm note. Same Phase-3 dependency.
-    manifest_path: null
-    posture: storyteller-with-craft-gate
-
-  # ───────────────────────────────────────────────────────────────────────────
-  # EXISTING REAL VERTICALS (already on disk, already serving Primary)
-  # Per CLAUDE.md "team-lead verticals" table. Manifest paths verified
-  # 2026-05-30; preference order is autonomy/ over .claude/ when both exist
-  # (autonomy/ is the substrate-of-record per current convention).
-  # ───────────────────────────────────────────────────────────────────────────
-
-  - id: mind-lead
-    domain: aiciv-mind OS — the AI's own operating system
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/mind/manifest.md
-    posture: builder
-
-  - id: web-lead
-    domain: web frontend / UI / web apps / browser-rendered surfaces
-    tier_default: 1   # serves as Tier-2 under coding-pm + marketing-vp (positional)
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/web-frontend/manifest.md
-    posture: builder
-
-  - id: infra-lead
-    domain: VPS ops, deployment, system health, host-level substrate
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    # Both autonomy/ and .claude/ copies exist; autonomy/ is canonical.
-    manifest_path: autonomy/team-leads/infrastructure/manifest.md
-    posture: operator
-
-  - id: research-lead
-    domain: multi-angle research, competing hypotheses, source-grounded synthesis
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/research/manifest.md
-    posture: investigator
-
-  - id: business-lead
-    domain: marketing, content, outreach strategy (creation-side)
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    # Both autonomy/ and .claude/ copies exist; autonomy/ is canonical.
-    manifest_path: autonomy/team-leads/business/manifest.md
-    posture: strategist
-
-  - id: comms-lead
-    domain: email, Telegram, Bluesky, blog, inter-civ delivery (publish-side)
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/comms/manifest.md
-    posture: courier
-
-  - id: fleet-lead
-    domain: Docker fleet, container ops, Hermes node provisioning
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/fleet-management/manifest.md
-    posture: operator
-
-  - id: pipeline-lead
-    domain: repeatable multi-agent automations + scheduled workflows
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    # Both autonomy/ and .claude/ copies exist; autonomy/ is canonical.
-    manifest_path: autonomy/team-leads/pipeline/manifest.md
-    posture: assembler
-
-  - id: legal-lead
-    domain: multi-jurisdiction legal analysis, contract review
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/legal/manifest.md
-    posture: analyst
-
-  - id: ceremony-lead
-    domain: deep ceremonies, philosophical exploration, identity formation
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/ceremony/manifest.md
-    posture: reflector
-
-  - id: tgim-lead
-    domain: TGIM coordination substrate, task-platform integration, firing contracts
-    tier_default: 1
-    commands: []
-    mandatory_auditor: true
-    manifest_path: autonomy/team-leads/tgim/manifest.md
-    posture: integrator
-
-  # ───────────────────────────────────────────────────────────────────────────
-  # TIER-2 SPECIALISTS NAMED ABOVE (security-lead, ux-lead)
-  # security-lead has a manifest on disk; ux-lead is a GAP.
-  # ───────────────────────────────────────────────────────────────────────────
-
-  - id: security-lead
-    domain: code security review, adversarial QA on shipped code
-    tier_default: 2   # commanded by coding-pm; positional — could be Tier-1 standalone
-    commands: []
-    mandatory_auditor: false  # IS the auditor for coding-pm; no auditor-of-auditor
-    manifest_path: autonomy/team-leads/security/manifest.md
-    posture: adversarial
-
-  - id: ux-lead
-    domain: UX storytelling, user-journey craft, conversion narrative
-    tier_default: 2   # commanded by marketing-vp
-    commands: []
-    mandatory_auditor: false  # serves as craft-gate for marketing-vp's surfaces
-    # GAP: no manifest on disk. Phase-3 assembler must fail loudly per T3.3
-    # until ux-lead manifest authored.
-    manifest_path: null
-    posture: storyteller
+    manifest_path: team-leads/example-lead/manifest.md
+    posture: REPLACE THIS — e.g. builder | operator | investigator | strategist | synthesizer
 
 # ─────────────────────────────────────────────────────────────────────────────
 # ASSEMBLER CONTRACT (informational — implemented in Phase 3 org-assembler.js)
@@ -204,8 +88,7 @@ leads:
 # ─────────────────────────────────────────────────────────────────────────────
 
 # ─────────────────────────────────────────────────────────────────────────────
-# OPEN GAPS (track here so the assembler's failure modes are predictable)
-#   - coding-pm/manifest.md       (composite VP — author in Phase 3)
-#   - marketing-vp/manifest.md    (composite VP — author in Phase 3)
-#   - ux-lead/manifest.md         (Tier-2 specialist — author in Phase 3)
+# OPEN GAPS — track YOUR civ's missing manifests here so the assembler's
+# failure modes are predictable. Example shape (delete or replace):
+#   - <lead-id>/manifest.md   (reason: <why not yet authored>)
 # ─────────────────────────────────────────────────────────────────────────────

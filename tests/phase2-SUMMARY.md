@@ -17,8 +17,8 @@ The Phase-2 librarian is **built, traceable (no invention), immediacy-fixed, AND
 ## What Shipped
 
 ### Files
-- `/home/corey/projects/AI-CIV/ACG/tools/digest_librarian.py` — extractive-ranker-v1 librarian
-- `/home/corey/projects/AI-CIV/ACG/tools/incarnation_runner.py` — wired to refresh inlined DIGESTs before any read
+- `<originating-civ-root>/tools/digest_librarian.py` — extractive-ranker-v1 librarian
+- `<originating-civ-root>/tools/incarnation_runner.py` — wired to refresh inlined DIGESTs before any read
 
 ### CLI Surface
 ```
@@ -83,7 +83,7 @@ Pre: log=60 lines, DIGEST ledger=60. Appended one finding via `canon_append.py` 
 
 Ran `incarnation_runner.py --show-inline _lib_gate` (no explicit librarian call). rc=0; marker found **once** at line 56 as a fully id-traced bullet. DIGEST ledger advanced 60→61 during the call — proving `_refresh_inlined_digests` fired `--if-stale` BEFORE the DIGEST read. Cleanup confirmed.
 
-**Gate Receipt**: `/home/corey/projects/AI-CIV/ACG/projects/aiciv-native-org/tests/phase2-librarian.md`
+**Gate Receipt**: `<originating-civ-root>/tests/phase2-librarian.md`
 
 ---
 
@@ -127,7 +127,7 @@ Dreamer needs trustworthy digests. Digests are now: (1) bounded under caps, (2) 
 
 1. **Mechanism is EXTRACTIVE, not agentic.** Despite the task framing of "agentic librarian," what shipped is `extractive-ranker-v1` — deterministic rank + dedupe + supersession + caps. No model client invoked. Justifiable BY CONSTRUCTION (compress-not-create guarantee + no subprocess auth available), but is a meaningful framing-drift Corey should ratify or correct.
 
-2. **No model client wired.** No `ANTHROPIC_API_KEY` in subprocess, no MiniMax-router call, no Ollama fallback. If Corey wants true agentic summarization (e.g., paraphrase compression with citation), this is the swap-point. Post-verify gate would still guard correctness, but a model would need to embed id tokens to pass.
+2. **No model client wired.** No `ANTHROPIC_API_KEY` in subprocess, no third-party-router call, no local-model fallback. If true agentic summarization is wanted (e.g., paraphrase compression with citation), this is the swap-point. Post-verify gate would still guard correctness, but a model would need to embed id tokens to pass.
 
 3. **Cap-trimming under pressure**: when 60 entries → 25 dropped at cap (re-validation case), the ranker drops *oldest findings first*. Load-bearing decisions/doctrine-candidates rank above findings, so the ZK9 finding survived only because it was newer than the dropped cohort. A genuinely old + load-bearing finding could be trimmed silently. Promotion-to-doctrine-candidate before age-eviction is the cure-path but is NOT yet wired.
 
@@ -143,6 +143,6 @@ Dreamer needs trustworthy digests. Digests are now: (1) bounded under caps, (2) 
 
 ## Receipt Paths
 
-- Gate receipt: `/home/corey/projects/AI-CIV/ACG/projects/aiciv-native-org/tests/phase2-librarian.md`
-- This summary: `/home/corey/projects/AI-CIV/ACG/projects/aiciv-native-org/tests/phase2-SUMMARY.md`
-- Phase-1 predecessor: `/home/corey/projects/AI-CIV/ACG/projects/aiciv-native-org/tests/phase1-SUMMARY.md`
+- Gate receipt: `<originating-civ-root>/tests/phase2-librarian.md`
+- This summary: `<originating-civ-root>/tests/phase2-SUMMARY.md`
+- Phase-1 predecessor: `<originating-civ-root>/tests/phase1-SUMMARY.md`

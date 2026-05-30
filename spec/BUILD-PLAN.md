@@ -2,19 +2,18 @@
 
 **Author**: ACG Primary (Opus 4.8), 2026-05-30 ~15:00Z, pre-context-reset.
 **Purpose**: a fresh post-reset session executes this COLD. Every phase = build steps (exact paths) + a TEST GATE that must pass before the next phase. No phase advances on a claim; only on an on-disk receipt.
-**Read first**: `projects/aiciv-native-org/spec/SPEC-SHEET-v0.2.md` (the what + why) and `PRIMITIVE-INVENTORY.md` (tested vs not). This doc is the HOW + WHEN.
-**Discipline**: substrate-honest. Each test writes a receipt to `projects/aiciv-native-org/tests/`. workflow-lead reviews scripts POST-HOC (never a pre-run gate). MiniMax/Hermes integration is DEFERRED to Phase 6+ (Corey rule: after everything else battle-tested).
+**Read first**: `spec/SPEC-SHEET-v0.2.md` (the what + why) and `spec/PRIMITIVE-INVENTORY.md` (tested vs not). This doc is the HOW + WHEN.
+**Discipline**: substrate-honest. Each test writes a receipt to `tests/` (in the adopter civ's repo). workflow-lead reviews scripts POST-HOC (never a pre-run gate). Cross-model auditor integration (different-prior 2nd substrate; adopter's choice of model/vendor) is DEFERRED to Phase 6+ — the working rule is "different-model prior comes last; everything else battle-tested first."
 
 ---
 
 ## STATE AT PLAN-TIME (what already exists — do NOT rebuild)
 
 ALREADY SHIPPED + ON DISK:
-- Skills: `autonomy/skills/team-launch-2/SKILL.md`, `autonomy/skills/provisional-skill-lifecycle/SKILL.md`, `autonomy/skills/acg-coo/SKILL.md`, `autonomy/skills/workflow-js-mastery/SKILL.md`
-- Mechanism: `workflows/acg-coo.js` (has 2 known bugs — fix in Phase 1)
-- Project: `projects/aiciv-native-org/` with MISSION.md, spec/ (SPEC-SHEET-v0.2 + PRIMITIVE-INVENTORY + this), research/ (10 files), memory-design/, tests/ (primitive-tests-2026-05-30.md)
-- TGIM tooling: `tools/tgim_event.py`, `tools/agentauth_sign_jwt.py` — TGIM write+readback PROVEN
-- Email hook fixed: `.claude/hooks/block_direct_email.py` whitelists send_mom_email.py
+- Skills: `skills/team-launch-2/SKILL.md`, `skills/provisional-skill-lifecycle/SKILL.md`, `skills/acg-coo/SKILL.md`, `skills/workflow-js-mastery/SKILL.md`
+- Mechanism: `workflows/acg-coo.js` (had 2 known bugs — fixed in Phase 1; see SPEC §12)
+- Spec + receipts: `spec/` (SPEC-SHEET-v0.2 + BUILD-PLAN + PRIMITIVE-INVENTORY), `tests/` (phase1 + phase2 receipts)
+- TGIM tooling: `tools/work_chain_record.py` + `tools/agentauth_sign_jwt.py` — TGIM write+readback PROVEN upstream; tools are substrate-independent (adopter brings own seat / civ-id / keypair)
 
 ALREADY TESTED (13 primitives — don't re-test, see SPEC §15): incarnation, mem-write, fork, collapse, firewall, nest, auditor, gate, resource, TGIM, agentauth-identity, composability, memory-contract-shape.
 
@@ -25,7 +24,7 @@ ALREADY TESTED (13 primitives — don't re-test, see SPEC §15): incarnation, me
 1. Read `projects/aiciv-native-org/spec/SPEC-SHEET-v0.2.md` fully.
 2. Read this BUILD-PLAN.md.
 3. Read `.claude/scratchpad-daily/<today>.md` for any state since this plan.
-4. `git -C /home/corey/projects/AI-CIV/ACG log --oneline -10` to see what's landed.
+4. `git -C <your-civ-root> log --oneline -10` to see what's landed.
 **TEST GATE 0**: can state, in one paragraph, which phase is next + why. No build until grounded.
 
 ---
@@ -43,7 +42,7 @@ ALREADY TESTED (13 primitives — don't re-test, see SPEC §15): incarnation, me
 3. `tools/doctrine_guard.py` — pre-commit hook (wire into `.git/hooks/pre-commit` or `.claude/hooks/`): blocks in-place edits to `mem/doctrine/*` (hash-chain check); doctrine is immutable-versioned.
 4. Create the tree: `mem/doctrine/` (+ `INDEX.md`), `mem/canon/` (+ `.gitkeep`), `mem/work/` (+ `.gitkeep`). Add `mem/work/` to `.gitignore` (job-scoped, ephemeral).
 5. FIX `workflows/acg-coo.js` 2 bugs (SPEC §12): (a) sanitize/length-cap `intent.goal`+`intent.constraints` before template interpolation (lines ~51-53, 69-72) — fence+escape; (b) add `additionalProperties:false` + `maxLength` to the return schema (lines ~74-80).
-6. Add `§0 MANDATORY-LOAD + companions` header to `autonomy/skills/workflow-js-mastery/SKILL.md` pointing at `composition.yaml` (Phase 3) + a patterns index.
+6. Add `§0 MANDATORY-LOAD + companions` header to `skills/workflow-js-mastery/SKILL.md` pointing at `composition.yaml` (Phase 3) + a patterns index.
 
 **TEST GATE 1** (write receipt `tests/phase1-runtime.md`):
 - T1.1: run `incarnation_runner.py` on a trivial agent → confirm inlined-memory block was injected (grep the prompt log) AND return WITHOUT memory_delta is REJECTED, WITH is accepted.
@@ -95,8 +94,8 @@ ALREADY TESTED (13 primitives — don't re-test, see SPEC §15): incarnation, me
 
 ---
 
-## PHASE 5 — The Dreamer (dreamer-lead, local Opus only)
-**Goal**: living adversarial memory consolidation. (dreamer-NODE/MiniMax is Phase 6, deferred.)
+## PHASE 5 — The Dreamer (dreamer-lead, primary-model only)
+**Goal**: living adversarial memory consolidation. (dreamer-NODE on a different-model 2nd prior is Phase 6, deferred — adopter chooses the substrate.)
 
 **Build**:
 1. `workflows/dreamer-lead.js` — scheduled consolidation pass: reads ALL `mem/canon/*/log.jsonl` + `mem/doctrine/` → draws cross-cutting patterns → checks vs current memory → proposes provisional adds/edits to `mem/doctrine/` (as candidates, NOT direct writes).
@@ -110,11 +109,11 @@ ALREADY TESTED (13 primitives — don't re-test, see SPEC §15): incarnation, me
 
 ---
 
-## PHASE 6 — DEFERRED: MiniMax/Hermes integration (only after Phases 1-5 battle-tested)
-Per Corey: all Hermes/MiniMax comes last. Then:
-1. dreamer-NODE on MiniMax 2.7 (2nd prior) into the reserved slot.
-2. MiniMax-2.7 Hermes auditor (independence leg a) — closes the un-checkable-fab gap.
-3. TGIM work-chain auto-posting from every collapse: `autonomy/workflow_runtime/work_chain_record.py` (or fold into incarnation_runner) → POST to /events at each single-writer step. (TGIM write already proven; this automates it.)
+## PHASE 6 — DEFERRED: cross-model auditor integration (only after Phases 1-5 battle-tested)
+Working rule: the different-model prior comes last. Then:
+1. dreamer-NODE on a different-model 2nd prior (substrate of adopter's choice) into the reserved slot.
+2. Different-model auditor (independence leg a) — closes the un-checkable-fab gap.
+3. TGIM work-chain auto-posting from every collapse: fold `tools/work_chain_record.py` into incarnation_runner → POST to /events at each single-writer step. (TGIM write already proven; this automates it.)
 **TEST GATE 6**: cross-model auditor catches an un-checkable fab that same-model validators miss (the surviving R1 risk).
 
 ---
@@ -125,8 +124,8 @@ Retire SPEC §13 kill-list once the new system carries the load: tmux-pane coord
 ---
 
 ## CRITICAL-PATH SUMMARY
-Phase 1 (runtime/pipe) → 2 (digest) → 3 (composition) → 4 (evolution) → 5 (dreamer-lead) → [6 MiniMax, 7 legacy: deferred].
-Each gate writes a receipt to `projects/aiciv-native-org/tests/phaseN-*.md`. No advance without on-disk pass.
+Phase 1 (runtime/pipe) → 2 (digest) → 3 (composition) → 4 (evolution) → 5 (dreamer-lead) → [6 cross-model auditor, 7 legacy: deferred].
+Each gate writes a receipt to `tests/phaseN-*.md` in the adopter civ's repo. No advance without on-disk pass.
 
 ## STANDING DIRECTIVES (carry into every phase)
 - Substrate-honest: tested-or-flagged, never claimed.
@@ -134,5 +133,5 @@ Each gate writes a receipt to `projects/aiciv-native-org/tests/phaseN-*.md`. No 
 - One shared runtime; TGIM = universal adapter.
 - Memory consistency STRUCTURAL not procedural (no Read tool for memory; memory_delta required).
 - Serialize RAM-heavy renders (no parallel model-loads).
-- MiniMax/Hermes deferred to Phase 6+.
+- Cross-model auditor / different-prior 2nd substrate deferred to Phase 6+.
 - Don't resurrect litellm/ollama (caused the 401 storm).

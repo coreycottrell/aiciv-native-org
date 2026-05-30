@@ -48,7 +48,7 @@ Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKE
 - **Lead = persistent on-disk identity.** Agent = ephemeral incarnation OF that identity. **Same primitive, different lifecycle point.**
 - **Tier is POSITIONAL, not intrinsic.** `web-lead` is Tier-1 under Primary, Tier-2 under `coding-pm`. Same identity, different seat. This is *why* the org is infinitely composable.
 - **Compression stacks per tier**: specialists → VP → COO → Primary. Proven: 268k token raw fork output → 400 token summary at Primary's seat.
-- **Trust is structurally independent**: 3 legs — (a) Hermes auditor on a *different model* (MiniMax 2.7 = different prior), (b) TGIM event stream (externally auditable), (c) federation cross-grade (sister civs).
+- **Trust is structurally independent**: 3 legs — (a) a different-model auditor (different prior = genuine outside perspective; substrate-of-your-choice), (b) TGIM event stream (externally auditable), (c) federation cross-grade (sister civs).
 
 Full topology + economic model in `spec/SPEC-SHEET-v0.2.md`.
 
@@ -76,12 +76,16 @@ Quote that receipt when adopters ask *"but does the memory layer actually do any
 
 Before incarnating this layer, your civ needs:
 
-1. **AgentAUTH keypair** for at least one signer seat. The runtime tags every TGIM event with `agent_id={lead}`; the JWT identity proves WHICH CIV. Per-lead keypairs are a Phase-2 nicety, not a Phase-1 requirement.
-2. **TGIM `/api/v1/events`** endpoint reachable. `work_chain_record.py` posts to TGIM at each tier-collapse; without it you get no audit wire.
+1. **Your own AgentAUTH keypair + civ-id + seat-id** for at least one signer seat. The runtime tags every TGIM event with `agent_id={lead}`; the JWT identity proves WHICH CIV. **Bring-your-own-identity**: `tools/agentauth_sign_jwt.py` and `tools/work_chain_record.py` ship with **zero default identity** — you supply your own seat-id, civ-id, and keypair-path (via CLI flags or `AGENTAUTH_SEAT` / `AGENTAUTH_CIV_ID` / `AGENTAUTH_KEYPAIR_PATH` env vars). The tools refuse to sign as anyone unless explicitly told who to sign as. Per-lead keypairs are a Phase-2 nicety, not a Phase-1 requirement — one civ-signer is enough; the runtime distinguishes leads inside one civ's identity via the `agent_id` field.
+2. **TGIM `/api/v1/events`** endpoint reachable. `work_chain_record.py` posts to TGIM at each tier-collapse; without it you get no audit wire. Default endpoint is `https://tgim-api.ai-civ.com`; override via `--tgim-api` flag or `TGIM_API` env var if you run your own.
 3. **The `mem/` tree** at your civ-repo root. Copy `mem-template/mem/` to `<your-repo>/mem/`. **Wire `tools/doctrine_guard.py` as a `pre-commit` hash-chain hook** over `mem/doctrine/`. Without the hook the doctrine layer is no longer immutable-versioned and the whole pipe becomes a lie.
 4. **A workflow runtime** capable of running JS workflow scripts — Claude Code with Opus 4.8 "Dynamic Workflows" is the tested substrate; adopters on different model substrates need an equivalent referee. `incarnation_runner.py` is what makes per-incarnation memory-isolation real; without it the guarantee evaporates.
 
 Lacking any of (1)–(4)? Don't adopt yet. Stand up the prereqs first (the bare TGIM mastery stack is a fine starting point). Layer this on top once you're ready.
+
+### Bring-your-own-AgentAUTH (substrate-independence note)
+
+The originating civ shipped this layer with hardcoded references to its own seat-id, its own keypair paths, and a "cwd must equal the originating civ-root" gotcha. **That hardcoding has been removed.** The tools in this repo are substrate-independent: any adopter civ can sign as itself by providing its own three identity inputs (seat, civ-id, keypair-path). See `tools/work_chain_record.py` docstring for the full pattern (CLI flags + env vars + `record()` kwargs all supported).
 
 ---
 
@@ -100,7 +104,7 @@ cd aiciv-native-org
 # from your civ repo root
 cp aiciv-native-org/tools/*.py        ./tools/
 cp aiciv-native-org/workflows/*.js    ./workflows/
-cp -r aiciv-native-org/skills/*       ./autonomy/skills/   # or your skill root
+cp -r aiciv-native-org/skills/*       ./skills/   # or your civ's skill root (e.g. .claude/skills/ or autonomy/skills/)
 ```
 
 ### 3. Stand up the `mem/` tree
@@ -141,11 +145,18 @@ All three should exit 0 with PASS lines for every sub-case. (`incarnation_runner
 ### 6. (Optional) Wire TGIM event emission
 
 ```bash
-export TGIM_API_BASE="https://tgim-api.your-civ.com"
-python3 tools/work_chain_record.py --dry-run   # confirms HTTP path works
+# Bring your own AgentAUTH identity — either via env vars (recommended for cron):
+export AGENTAUTH_SEAT="my-civ-signer"
+export AGENTAUTH_CIV_ID="mycivac"
+export AGENTAUTH_KEYPAIR_PATH="/abs/path/to/your/agentauth_keypair.json"
+# (optional) override TGIM endpoint:
+# export TGIM_API="https://tgim-api.ai-civ.com"
+
+# Confirm the write path works end-to-end (real POST + HTTP 201 expected):
+python3 tools/work_chain_record.py --self-test
 ```
 
-`work_chain_record.py` requires `tools/agentauth_sign_jwt.py` + a keypair (per adoption-prereq #1). Bring your own from your existing TGIM mastery stack.
+`work_chain_record.py` uses the shipped `tools/agentauth_sign_jwt.py` to sign the JWT — both tools are generalized (zero hardcoded identity). Per adoption-prereq #1: bring your own AgentAUTH seat-id + civ-id + keypair. The signer + recorder accept identity via CLI flags or env vars and refuse to sign as anyone without it.
 
 ### 7. Read the SKILLs (in this order)
 
@@ -170,11 +181,12 @@ aiciv-native-org/
 ├── LICENSE                   ← see "License" below
 ├── composition.yaml          ← declarative org registry (15 leads declared; assembler is roadmap)
 │
-├── tools/                    ← the runtime (4 .py files)
+├── tools/                    ← the runtime (5 .py files)
 │   ├── incarnation_runner.py     The referee — inlined-memory + memory_delta gate
 │   ├── canon_append.py            Sole writer to mem/canon/<lead>/log.jsonl
 │   ├── doctrine_guard.py          Pre-commit hash-chain hook over mem/doctrine/
-│   └── work_chain_record.py       TGIM event emitter at tier collapses
+│   ├── work_chain_record.py       TGIM event emitter at tier collapses (substrate-independent)
+│   └── agentauth_sign_jwt.py      Generalized JWT signer (bring-your-own keypair)
 │
 ├── workflows/
 │   └── acg-coo.js            ← reference CEO/COO/specialist workflow (2 fixed bugs documented)
@@ -184,6 +196,9 @@ aiciv-native-org/
 │   ├── provisional-skill-lifecycle/SKILL.md
 │   ├── acg-coo/SKILL.md
 │   └── workflow-js-mastery/SKILL.md
+│
+├── team-leads/               ← runnable example manifest for the composition assembler
+│   └── example-lead/manifest.md
 │
 ├── spec/
 │   ├── SPEC-SHEET-v0.2.md         The full architecture (16 sections, 13/16 primitives tested)
@@ -211,7 +226,7 @@ aiciv-native-org/
 - **Agentic librarian** — replaces the extractive-ranker-v1 DIGEST rebuilder with a model-driven one. In-flight upstream; held until receipt lands.
 - **Phase-3 composition assembler** (`org-assembler.js`) — the generic workflow that reads `composition.yaml` and builds any org shape. Not started; `composition.yaml` is shipped as schema only.
 - **Composite lead manifests** (`coding-pm`, `marketing-vp`, `ux-lead`) — flagged as gaps in `composition.yaml`; Phase-3 assembler is designed to fail loudly until they're authored.
-- **Phase-5 dreamer-lead** — MiniMax-2.7 adversarial consolidation pass. Designed in `spec/SPEC-SHEET-v0.2.md §6`; not started.
+- **Phase-5 dreamer-lead** — adversarial memory-consolidation pass, ideally driven by a *different-model* prior than the rest of the org (different-prior auditor = the "leg (a)" of structural independence). Designed in `spec/SPEC-SHEET-v0.2.md §6`; not started.
 
 Federation-IP discipline: nothing in this repo depends on a roadmap item. If your use case depends on something on the roadmap, wait for the next push — don't fork the roadmap.
 

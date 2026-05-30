@@ -86,8 +86,8 @@ Corey (creator) ⇄ Primary (CEO: think big / plan / delegate / judge — INVOKE
 ### The dreamer loop
 ```
 TWO dreamers, two priors, dream in parallel:
-  • dreamer-LEAD (local, Opus)         → patterns from the Opus vantage
-  • dreamer-NODE (Hermes, MiniMax 2.7) → patterns from a DIFFERENT-MODEL vantage
+  • dreamer-LEAD (local, your primary model) → patterns from the primary-prior vantage
+  • dreamer-NODE (different-model 2nd prior) → patterns from a DIFFERENT-MODEL vantage
         │ each: read all memory → draw patterns → check vs current → propose provisional adds/edits
         ▼
   AUDITOR/QA interrogates BOTH adversarially: which / both / neither correct + useful?
@@ -99,26 +99,26 @@ TWO dreamers, two priors, dream in parallel:
 - Structurally identical to what we proved today (fork → adversarial gate → survivors), with *consolidation* as the work.
 - **Makes memory a mind that gets wiser while it sleeps**, not a filing cabinet.
 
-### Sequencing (per Corey's "MiniMax comes last" rule)
-- **NOW**: dreamer-LEAD (local Opus) + auditor interrogation + commit-to-provisional. No MiniMax dep.
-- **LATER (post-battle-test)**: dreamer-NODE (MiniMax 2.7) drops into the RESERVED slot as 2nd prior.
+### Sequencing ("different-model prior comes last" rule)
+- **NOW**: dreamer-LEAD (local, primary model) + auditor interrogation + commit-to-provisional. No different-model-substrate dep.
+- **LATER (post-battle-test)**: dreamer-NODE (on a different-model 2nd prior — adopter's substrate choice) drops into the RESERVED slot.
 - Build dreamer-lead AFTER PR-1 (needs the mem/ tree to dream over). Runs as a scheduled consolidation pass over mem/canon/ → proposes to mem/doctrine/ via the provisional gate.
 
 ## 7. TRUST / STRUCTURAL INDEPENDENCE (3 legs) — cures R1 (epistemic-correlation-collapse)
 
-The risk: all internal auditors share the Opus prior → can't catch shared-prior fabs (tonight's K=1 fab propagated through 4 internal pipelines for exactly this reason). The 3 legs:
-- **(a) MiniMax-2.7 Hermes auditor** — different MODEL = different prior = genuine outside perspective. We own the fleet → deployable, no SLA dependency. **DEFERRED per Corey: all Hermes/MiniMax integration comes AFTER everything else battle-tested.**
+The risk: all internal auditors share the primary model's prior → can't catch shared-prior fabs (tonight's K=1 fab propagated through 4 internal pipelines for exactly this reason). The 3 legs:
+- **(a) Different-model auditor** — different MODEL = different prior = genuine outside perspective. Substrate of your choice (a different vendor, a different model family on the same vendor, a local model — anything whose prior is genuinely uncorrelated with your primary). **DEFERRED: cross-model integration comes AFTER everything else is battle-tested ("different-model prior comes last").**
 - **(b) TGIM event stream** — every work-chain posted to `/events`; externally readable. ✅ PROVEN today (write 201 + read-back, see §8).
-- **(c) Federation cross-grade** — Witness/Aether/Parallax. TB already independently converged.
-- Escalation on auditor-miss: email partner OR TGIM assignment tagged to outside-adversarial Hermes node.
+- **(c) Federation cross-grade** — sister civs reviewing each other's work-streams.
+- Escalation on auditor-miss: email partner OR TGIM assignment tagged to your different-model auditor node.
 
-**Corey directive 5/30**: don't chase un-checkable-fab / cross-vertical superiority now — "any automatic consistent validator step just dropped fabs by 99%. worry about more 9s later." The validator-step IS the win; more 9s later.
+**Working directive**: don't chase un-checkable-fab / cross-vertical superiority now — "any automatic consistent validator step just dropped fabs by 99%. worry about more 9s later." The validator-step IS the win; more 9s later.
 
 ## 8. TGIM INTEGRATION + AGENTAUTH IDENTITY — ✅ TESTED 2026-05-30
 
-- **P14 TGIM**: fired real work-chain event as `agent_id=coding-pm` → HTTP 201, `event_id evt_01KSWMKAB…`. Read back from stream: `coding-pm | task_completed | tsk_acg_nativeorg_tgimtest`. Write AND external read-back both work. The audit wire is REAL.
-- **P15 AgentAuth identity — RESOLVED**: leads do NOT need per-lead keypairs. One civ keypair (hermes-primary signer) proves the civ; `agent_id` field gives each lead a distinct entity ID in the stream. Per-lead keypairs = Phase-2 non-repudiation nicety only.
-- Tool: `tools/tgim_event.py` (--type --actor --task-id-prefix --title --description --scope --priority); signer `tools/agentauth_sign_jwt.py --seat hermes-primary`. CWD must = ACG root.
+- **P14 TGIM**: fired real work-chain event as `agent_id=coding-pm` → HTTP 201, `event_id evt_01KSWMKAB…`. Read back from stream: `coding-pm | task_completed | tsk_<civ>_nativeorg_tgimtest`. Write AND external read-back both work. The audit wire is REAL.
+- **P15 AgentAuth identity — RESOLVED**: leads do NOT need per-lead keypairs. One civ keypair (any signer seat the adopter civ chooses) proves the civ; `agent_id` field gives each lead a distinct entity ID in the stream. Per-lead keypairs = Phase-2 non-repudiation nicety only.
+- Tool: `tools/work_chain_record.py` + signer `tools/agentauth_sign_jwt.py` (substrate-independent — adopter brings own seat-id / civ-id / keypair-path; no cwd-walk gotcha; see tool docstrings).
 - Wiring plan: at each tier's single-writer collapse, POST {task_id, work_chain, output_summary, tier, lead} → /events. (`work_chain_record.py` in PR-1.)
 
 ## 9. RUNTIME + SKILLS
@@ -131,17 +131,17 @@ The risk: all internal auditors share the Opus prior → can't catch shared-prio
 
 ## 10. SHIPPED SKILLS (this build, all provisional, dogfooding their own lifecycle)
 
-- `autonomy/skills/team-launch-2/SKILL.md` — forkable Workflow-incarnated leads
-- `autonomy/skills/provisional-skill-lifecycle/SKILL.md` — born-provisional+proof → distinct-incarnation ✓/✗ → 3✓ → canon (can't self-grade)
-- `autonomy/skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` — Tier-1 COO firewall (has 2 known bugs, §12)
-- `autonomy/skills/workflow-js-mastery/SKILL.md` — the craft playbook
+- `skills/team-launch-2/SKILL.md` — forkable Workflow-incarnated leads
+- `skills/provisional-skill-lifecycle/SKILL.md` — born-provisional+proof → distinct-incarnation ✓/✗ → 3✓ → canon (can't self-grade)
+- `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` — Tier-1 COO firewall (has 2 known bugs, §12)
+- `skills/workflow-js-mastery/SKILL.md` — the craft playbook
 
 ## 11. BUILD SEQUENCE
 
 1. **PR-1** (~250 LOC) — THE FOUNDATION. `incarnation_runner.py` (runtime = the memory pipe §5) + 3-layer `mem/` tree + `canon_append.py` (sole writer) + `doctrine_guard.py` (hash-chain hook) + `work_chain_record.py` (TGIM, §8 proven) + `composition.yaml` (org registry) + mastery §0 header + 2 COO fixes (§12). Tests P16/P17 FOR REAL + unblocks self-evolution loop.
-2. **dreamer-lead** (local Opus) — scheduled consolidation pass over mem/canon/ → provisional doctrine proposals + auditor interrogation. (Needs PR-1's mem/ tree.)
+2. **dreamer-lead** (local, primary model) — scheduled consolidation pass over mem/canon/ → provisional doctrine proposals + auditor interrogation. (Needs PR-1's mem/ tree.)
 3. **composition assembler** — generic workflow reading composition.yaml to build any org shape.
-4. **DEFERRED (post-battle-test)**: MiniMax-2.7 Hermes auditor (leg a) + dreamer-NODE (2nd prior) + legacy retirements.
+4. **DEFERRED (post-battle-test)**: different-model auditor (leg a) + dreamer-NODE (2nd prior on a different-model substrate of the adopter's choice) + legacy retirements.
 
 ## 12. KNOWN DEBT
 
@@ -162,7 +162,7 @@ tmux-pane coordination · TeamCreate/TeamDelete (lethal act dies by deletion) ·
 
 - ✅ **13 TESTED**: incarnation, mem-write, fork, collapse, firewall, nest, auditor, gate, resource, TGIM, agentauth-identity, composability, memory-contract-shape.
 - ⚠️ **3 SOFT**: context-frugality (inferred not measured), self-evolution (partial loop), nesting-budget (asserted from tool spec).
-- ❌ **2 UNTESTED (correctly deferred — depend on unbuilt things)**: un-checkable-fab cross-model resistance (needs MiniMax-2.7 auditor), full self-evolution loop (needs runtime).
+- ❌ **2 UNTESTED (correctly deferred — depend on unbuilt things)**: un-checkable-fab cross-model resistance (needs the different-model auditor — adopter's substrate choice), full self-evolution loop (needs runtime).
 
 ## 16. OPEN QUESTIONS
 

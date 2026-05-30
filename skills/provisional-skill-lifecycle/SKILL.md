@@ -6,14 +6,18 @@ status: provisional
 authored: 2026-05-29
 author: ACG Primary (Opus 4.8), refined with Corey via rubber-duck 2026-05-29
 backed_by:
-  - data/reports/teamlead-primitives-2026-05-29.md (10/10 primitive tests; T5 self-authorship, T6 gate, T10 K-refusal)
-  - .claude/design-notes/2026-05-29-forkable-leads-and-provisional-skills.md
+  - the originating civ's primitive-test report (10/10 primitive tests; T5 self-authorship, T6 gate, T10 K-refusal). Your fork should point at YOUR civ's primitive-test receipt path.
+  - the originating civ's design notes on forkable-leads-and-provisional-skills.
 related_doctrines:
-  - memory/doctrine_anti_fab_applies_symmetrically.md
-  - memory/doctrine_audit_skills_suggest_never_mutate.md
-  - autonomy/skills/cross-grading-substrate/SKILL.md
+  # Replace these with YOUR civ's equivalent doctrines (or remove if you don't yet have any).
+  # The two principles below are the load-bearing ones — name them however your civ does:
+  #   1. "Anti-fabrication applies symmetrically" — overcount AND undercount; both directions
+  #      of claim-vs-substrate drift demand cure.
+  #   2. "Audit skills SUGGEST, never MUTATE" — an audit-class skill must not also be the
+  #      writer that corrects what it audits (no self-grading).
+  # Also recommended: a cross-grading-substrate skill / pattern, where one AI checks another.
 sibling_skills:
-  - autonomy/skills/team-launch-2/SKILL.md (the forkable-lead system this lifecycle governs)
+  - skills/team-launch-2/SKILL.md (the forkable-lead system this lifecycle governs)
 ---
 
 # Provisional-Skill Lifecycle

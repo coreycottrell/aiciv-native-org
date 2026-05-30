@@ -7,11 +7,11 @@ authored: 2026-05-30
 author: ACG Primary (Opus 4.8) — seeded from ~9 workflows written 2026-05-29/30
 qa_owner: workflow-lead (post-hoc review, NOT a gate)
 backed_by:
-  - 9 production workflows this session (opus-4.8 battery, 10-primitive, overnight-vertical, acg-coo, composable-proof, 5x3 adversarial, natural-substrate, socket-401-hunt, web-research-401)
+  - 9 production workflows from the originating session (opus-4.8 capability battery, 10-primitive battery, overnight-vertical, acg-coo, composable-proof, 5x3 adversarial, natural-substrate, and two crisis-investigation workflows). Your fork should append YOUR civ's production-workflow receipts as you accumulate them.
 sibling_skills:
-  - autonomy/skills/team-launch-2/SKILL.md
-  - autonomy/skills/acg-coo/SKILL.md
-  - autonomy/skills/provisional-skill-lifecycle/SKILL.md
+  - skills/team-launch-2/SKILL.md
+  - skills/acg-coo/SKILL.md
+  - skills/provisional-skill-lifecycle/SKILL.md
 ---
 
 # workflow-js-mastery
@@ -23,15 +23,15 @@ sibling_skills:
 This skill is the **craft playbook** (how to write a workflow). It is intentionally TIGHT and references — does not absorb — its companions so each compounds on its own clock (SPEC-SHEET-v0.2 §9).
 
 **Companion 1 — the org REGISTRY (DATA, not craft):**
-- **`projects/aiciv-native-org/composition.yaml`** — declarative list of every lead (id, domain, tier_default, commands, mandatory_auditor, manifest_path, posture). The generic assembler workflow (Phase 3 `org-assembler.js`) reads this file to incarnate ANY org shape. When you're writing a workflow that forks specialists, the ROSTER lives here — not in the script. Update this file, not your workflow, when org topology changes.
+- **`composition.yaml`** (at the repo root) — declarative list of every lead (id, domain, tier_default, commands, mandatory_auditor, manifest_path, posture). The generic assembler workflow (Phase 3 `org-assembler.js`) reads this file to incarnate ANY org shape. When you're writing a workflow that forks specialists, the ROSTER lives here — not in the script. Update this file, not your workflow, when org topology changes.
 
 **Companion 2 — the patterns INDEX (proven shapes):**
-- **`autonomy/skills/workflow-js-mastery/patterns/`** — *TBD per SPEC §16 O1.* Will hold proven workflow shapes (fork-and-collapse, pipeline-with-auditor, composable-VP, etc.) as runnable example scripts indexed by use-case. Until that directory lands, treat the §2-§10 sections below + the 9 production workflows in `workflows/` (acg-coo, composable-proof, 5x3, etc.) as the de-facto pattern set. Format decision (skill vs `patterns/` dir) is OPEN (O1) — don't pre-fab structure.
+- **`skills/workflow-js-mastery/patterns/`** — *TBD per SPEC §16 O1.* Will hold proven workflow shapes (fork-and-collapse, pipeline-with-auditor, composable-VP, etc.) as runnable example scripts indexed by use-case. Until that directory lands, treat the §2-§10 sections below + the production workflows in `workflows/` (acg-coo is the seeded example) as the de-facto pattern set. Format decision (skill vs `patterns/` dir) is OPEN (O1) — don't pre-fab structure.
 
 **Companion 3 — sibling skills (already listed in frontmatter, repeated here for load-order):**
-- `autonomy/skills/team-launch-2/SKILL.md` — forkable Workflow-incarnated leads (the substrate this skill writes against).
-- `autonomy/skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` — worked example of a Tier-1 firewall (2 known bugs documented in SPEC §12; cures live in PR-1).
-- `autonomy/skills/provisional-skill-lifecycle/SKILL.md` — the gate amendments to THIS skill flow through (3 distinct ✓ → canon).
+- `skills/team-launch-2/SKILL.md` — forkable Workflow-incarnated leads (the substrate this skill writes against).
+- `skills/acg-coo/SKILL.md` + `workflows/acg-coo.js` — worked example of a Tier-1 firewall (2 known bugs documented in SPEC §12; cures live in PR-1).
+- `skills/provisional-skill-lifecycle/SKILL.md` — the gate amendments to THIS skill flow through (3 distinct ✓ → canon).
 
 **Discipline (Corey 2026-05-30): post-hoc review, never pre-run gate.** Workflows WORK now. workflow-lead reviews scripts AFTER they run, files catches, proposes amendments here. See §10.
 
@@ -85,7 +85,7 @@ This skill is the **craft playbook** (how to write a workflow). It is intentiona
 
 - The SCRIPT controls who runs when — not an agent "deciding." Reliable, repeatable, no drift. That determinism is the reliability win over TeamCreate.
 - `log(msg)` emits a narrator line to the user. Use it at phase boundaries + loop counters so a run is observable while it executes.
-- Persist artifacts to disk in the synthesis step so a run leaves a durable trail (survives /tmp wipes — write to `data/reports/` or `.claude/design-notes/`, NOT /tmp).
+- Persist artifacts to disk in the synthesis step so a run leaves a durable trail (survives /tmp wipes — write to durable adopter-chosen paths like `data/reports/` or your civ's design-notes dir, NOT /tmp).
 
 ## §9 — Known production failure catalog (this session, real)
 

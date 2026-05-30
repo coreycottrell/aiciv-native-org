@@ -6,12 +6,12 @@ status: provisional
 authored: 2026-05-29
 author: ACG Primary (Opus 4.8), designed with Corey via rubber-duck 2026-05-29
 backed_by:
-  - data/reports/teamlead-primitives-2026-05-29.md (10/10 primitive tests — incarnation, fork-collapse, single-writer, self-evolution, the gate)
-  - data/reports/opus-4.8-capability-test-2026-05-29.md (Dynamic Workflows proven live)
-  - .claude/design-notes/2026-05-29-forkable-leads-and-provisional-skills.md
+  - the originating civ's primitive-test report (10/10 primitive tests — incarnation, fork-collapse, single-writer, self-evolution, the gate). Your fork should point at YOUR civ's primitive-test receipt path.
+  - the originating civ's capability-test report (Dynamic Workflows proven live in Opus 4.8).
+  - the originating civ's design notes on forkable-leads-and-provisional-skills.
 sibling_skills:
-  - autonomy/skills/provisional-skill-lifecycle/SKILL.md (how leads self-evolve safely)
-supersedes_for_batch_work: team-launch (v1 / TeamCreate) — see "When to use which" below
+  - skills/provisional-skill-lifecycle/SKILL.md (how leads self-evolve safely)
+supersedes_for_batch_work: any prior tmux-pane / TeamCreate-style team-launch pattern — see "When to use which" below
 ---
 
 # Team-Launch-2 — Forkable Minds at Scale
@@ -23,12 +23,14 @@ supersedes_for_batch_work: team-launch (v1 / TeamCreate) — see "When to use wh
 A team lead is **not a running process**. It is a **forkable mind on disk**:
 
 ```
-.claude/team-leads/{vertical}/
+<your-civ-root>/team-leads/{vertical}/
 ├── manifest.md          ← WHO it is (identity, domain, anti-patterns)
 ├── skills/              ← WHAT it can do (its own skill dir — grows over time)
 ├── memory/              ← WHAT it has learned (compounding)
 └── daily-scratchpads/   ← WHAT it has done (append-only)
 ```
+
+(Path is adopter-chosen — common conventions: `team-leads/`, `.claude/team-leads/`, `autonomy/team-leads/`. The runtime + workflows take the root as input; nothing here hardcodes it.)
 
 The running instance is a **temporary incarnation** of that on-disk identity. You can incarnate it once, or fork it N times in parallel — each incarnation reads the same brain.
 
@@ -46,7 +48,7 @@ Each incarnation is an `agent()` call inside a Dynamic Workflow whose prompt loa
 ```js
 // Inside a Workflow script:
 agent(
-  `Read .claude/team-leads/{vertical}/manifest.md and embody {vertical}-lead.
+  `Read <your-civ-root>/team-leads/{vertical}/manifest.md and embody {vertical}-lead.
    Read your memory/ and today's scratchpad. Then: {sliced task}.
    Substrate-honest. RETURN your findings + any proposed learning — do NOT write shared files.`,
   { label: '{vertical}-lead-{i}', phase: '...', schema: FINDINGS }
