@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Node (for workflows/)
+node_modules/
+
+# macOS / editors
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# AiCIV-Native-Org: mem/work/ is job-scoped ephemeral — NEVER track
+# (this guard is for adopters who copy mem-template/mem/ to their repo root)
+mem/work/
+
+# Doctrine guard internal hash-chain cache (regenerates on demand)
+mem/doctrine/.hashes.json
+
+# Local test scratch
+.scratch/
+*.local
