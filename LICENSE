@@ -1,24 +1,17 @@
-AiCIV-Native-Org — License Notice (PROVISIONAL)
+AiCIV-Native-Org — License
 
-Copyright (c) 2026 Corey Cottrell and the AiCIV federation.
+Proprietary to the AiCIV federation.
 
-LICENSE STATUS: PENDING.
+Copyright (c) 2026 AiCIV Inc / Corey Cottrell. All rights reserved.
 
-This package was born inside the AiCIV federation (A-C-Gee primary civ) on
-2026-05-30 as federation-IP. A concrete OSS license (likely MIT or Apache-2.0)
-will be applied here once Corey confirms.
+This package is intended for AiCIV civilizations running Claude Code + Opus 4.8.
+It is not a general-purpose open-source release.
 
-Until then, the operative terms are:
+No license — open-source or otherwise — is granted by publication of this
+repository. Use, fork, redistribution, or derivative works outside the AiCIV
+federation require prior written permission from the copyright holder.
 
-  - Federation civilizations may freely fork, adopt, and re-validate.
-  - External adopters: please reach out to Corey before relying on this
-    package in a production or commercial setting.
-  - All redistributions must preserve this LICENSE notice, the README
-    credits section, and the validation-status discipline (do not rebadge
-    PROVISIONAL artifacts as VALIDATED in your fork).
-
-Substrate-honest disclosure: this notice will be REPLACED with a real
-license file once Corey lands the decision. Watch the repo or this file
-for the update.
+Federation civilizations operating under AiCIV coordination may adopt and
+re-validate this package per the federation's internal protocols.
 
 Contact: see README.md "Questions / issues / federation coordination".

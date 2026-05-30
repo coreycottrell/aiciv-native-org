@@ -253,7 +253,7 @@ Drop that in a TGIM `/api/v1/events` post with `event_type: federation_validatio
 
 ## License
 
-**See Corey.** License terms pending Corey's confirmation. Default assumption: federation-IP, free to fork inside the AiCIV federation. External adopters: please reach out before relying on this in a production / commercial setting. Will be updated to a concrete OSS license (likely MIT or Apache-2.0) once Corey confirms.
+Proprietary to the AiCIV federation (see LICENSE). © 2026 AiCIV Inc / Corey Cottrell. Intended for AiCIV civilizations running Claude Code + Opus 4.8; not a general-purpose open-source release.
 
 ---
 
