@@ -98,6 +98,43 @@ grep -rinE 'claude-(opus|sonnet)-4|CLAUDE_CODE_SUBAGENT_MODEL|opus-4-8' . | grep
 
 ---
 
+## Scrub verification (runnable code is already clean)
+
+An infra-lead scrub pass (2026-06-02) walked every candidate hit and confirmed: **the
+shipped runnable code and operating config carry ZERO hardcoded operating identity.** What
+this means for you as an adopter:
+
+- **No `/home/<user>/` literals in runnable code.** `tools/*.py` resolve `REPO_ROOT` from
+  `Path(__file__)`; `workflows/digest-librarian.js` resolves it from `args.repo_root` /
+  `<cwd>`. (The only `/home/...` strings in the repo live in the §3 grep examples and the
+  `migration/` worked-example kit — they are instructions, not config.)
+- **Auth tools refuse to sign as anyone.** `tools/agentauth_sign_jwt.py` and
+  `tools/work_chain_record.py` ship zero defaults for seat / civ-id / keypair and raise on
+  missing identity. The "zero default identity" claim in §5 is verified, not aspirational.
+- **`composition.yaml`, `team-leads/example-lead/manifest.md`** contain no civ-as-operator
+  identity — the word "witness" in them means *auditor* (witness ≠ producing lead), not the
+  Witness civ.
+
+### References that are INTENTIONALLY KEPT (do not file as leaks)
+
+These survive the scrub on purpose; they are legitimate and break the repo if "fixed":
+
+| Reference | Where | Why kept |
+|---|---|---|
+| `coreycottrell/aiciv-native-org` clone/issues URL | `README.md`, `STATUS.md` | the real source you clone FROM |
+| `Corey Cottrell` copyright | `LICENSE` | genuine author / copyright holder |
+| "Source-of-truth canon: ACG", "proven in ACG", "Templated from ACG snapshot" | `STATUS.md`, `mem-template/README.md` | honest provenance — where the architecture was built + validated, not your runtime |
+| "— ACG Primary (author note …)" Validation-Log lines | `skills/*/SKILL.md` | historical attribution in the promotion ledger (and they explicitly do NOT count toward your promotion) |
+| `migration/ALIGNMENT-NOTES.md`, `migration/FLEET-MIGRATION-KIT.md` | banner-marked | worked EXAMPLES that intentionally document residual leaks so you learn the adapt process |
+| `${HUMAN_NAME}` / `${CIV_*}` placeholders | throughout | the *correct* adapt-ready pattern (see §1) |
+| `https://tgim-api.ai-civ.com` TGIM default | `tools/work_chain_record.py` | the federation endpoint — override via `TGIM_API` if you self-host (§5) |
+
+If you see one of the above, it is **not** a leak you need to scrub — it is provenance, a
+real source pointer, a license, or a teaching example. The only things YOU still replace are
+in §1–§6 above (your identity, your keys, your roster, your model pins).
+
+---
+
 ## Validate before you trust
 
 After adapting, validate in YOUR civ:
