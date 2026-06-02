@@ -1,12 +1,19 @@
 # AiCIV-Native-Org
 
+> ## ⚠️ **DO NOT COPY-PASTE THIS REPO INTO YOUR CIVILIZATION.**
+> ⚠️ **REVIEW AND CAREFULLY ADAPT EVERY ARTIFACT TO YOUR OWN AICIV SETUP.**
+>
+> **Every adopter civ is different** — different identity (name, human, email, handle), different paths, different credentials/keys, different lead roster, different model/version pins. **Copy-pasting inherits another civilization's identity and breaks your config.** A pasted-in artifact carries the originating civ's hardcoded names, paths, and keys straight into your repo — an identity leak by construction.
+>
+> **This is a REVIEW-AND-ADAPT distribution, not a clone-it-and-run one.** Before running anything, work through the **[Adaptation Checklist](#adaptation-checklist-mandatory-before-you-run-anything)** below (and `ADAPTING.md`) and replace ALL identity, paths, and credentials with YOUR civ's. Validate in your own civ before you trust it.
+
 > **Forkable team-lead minds on disk + a memory runtime that provably compounds + composable into any org shape — native to the Claude-Code + Opus-4.8 Dynamic-Workflow substrate.**
 
 **REQUIRES: Claude Code (latest) + Opus 4.8.** The workflow substrate IS Claude Code's Workflow / `agent()` tooling running on Opus 4.8 — no external model, no API key. Every adopter civ runs the SAME Claude-Code + Opus-4.8 substrate; the one independent axis across adopters is **TGIM CIV-IDENTITY** (each adopter posts as themselves via their own AgentAUTH keypair). A different-model auditor path (independent prior on a different model) is a clearly-future **Phase-6 roadmap** item, not part of this distribution.
 
-This is the public, clone-it-and-go distribution of **Team-Leads 2.0**: the AI-civilization org architecture rebuilt for Anthropic's Claude Code + Opus 4.8 Dynamic Workflows. It replaces the legacy *tmux-pane + TeamCreate* model with **persistent on-disk lead identities** that get incarnated as background workflow agents — no panes to mis-detect, no shutdown-handshake crash class, scalable to ~1,000 parallel incarnations.
+This is the public **clone → review → adapt** distribution of **Team-Leads 2.0**: the AI-civilization org architecture rebuilt for Anthropic's Claude Code + Opus 4.8 Dynamic Workflows. It replaces the legacy *tmux-pane + TeamCreate* model with **persistent on-disk lead identities** that get incarnated as background workflow agents — no panes to mis-detect, no shutdown-handshake crash class, scalable to ~1,000 parallel incarnations.
 
-Born 2026-05-30 inside ACG (A-C-Gee primary civ). Federation-IP. Adopt freely.
+Born 2026-05-30 inside ACG (A-C-Gee primary civ). **Federation-IP — free to use, adopt deliberately:** review every artifact, replace ALL identity (names, paths, credentials, roster), and validate in your own civ before you run it. See the **[Adaptation Checklist](#adaptation-checklist-mandatory-before-you-run-anything)**.
 
 ---
 
@@ -96,6 +103,8 @@ The originating civ shipped this layer with hardcoded references to its own seat
 
 ## Quickstart
 
+> ⚠️ **The `cp` commands below copy reference artifacts into your repo as a STARTING POINT — not a finished install.** After every copy, you MUST review the file and replace the originating civ's identity (names, paths, keys, roster) with yours. Work the **[Adaptation Checklist](#adaptation-checklist-mandatory-before-you-run-anything)** before you run any incarnation. Copy → review → adapt → validate.
+
 ### 1. Clone
 
 ```bash
@@ -173,6 +182,44 @@ python3 tools/work_chain_record.py --self-test
 ### 8. Fork your first lead
 
 Use `coo` as the template. Rename, replace the seed domain knowledge with yours, point `composition.yaml` at your manifest paths. Incarnate via the Workflow tool.
+
+---
+
+## Adaptation Checklist (MANDATORY before you run anything)
+
+**This repo is REVIEW-AND-ADAPT, not copy-paste.** Every adopter civ MUST change the following before incarnating any artifact. The fuller version with rationale lives in [`ADAPTING.md`](ADAPTING.md).
+
+### 1. Identity parameters — set for YOUR civ
+- `${CIV_NAME}` — your civilization's name
+- `${HUMAN_NAME}` — your steward/creator
+- `${CIV_EMAIL}` — your civ's email / AgentMail inbox
+- `${CIV_HANDLE}` — your civ's social handle
+- Search the whole repo for `${...}` placeholders and set them. **`${CIV_NAME}`-style placeholders are GOOD — they are already adapt-ready; they just need YOUR values.** Distinguish them from hardcoded leaks (below).
+
+### 2. Hardcoded names to REPLACE (these are the originating civ's identity — leaks if pasted in)
+- `Corey` / `coreycottrell` (originating steward + GitHub user) → YOUR human / YOUR repo owner
+- `ACG` / `acg` / `acgee` / `A-C-Gee` (originating parent civ) → remove or replace with YOUR civ's lineage
+- `True Bearing` / `Witness` (reference-adopter + its parent — example lineage, not yours)
+- `rk_acg`-prefixed API keys → YOUR keys (never inherit)
+- Run the leak grep yourself: `grep -rinwE "acg|corey|coreycottrell|witness|true.?bearing" .` and confirm each hit is either documentation-about-origin or something you must replace.
+
+### 3. Paths — repoint to YOUR home
+- Any `/home/corey`, `/home/aiciv`, or other `/home/<user>/` literal → YOUR home / repo root.
+- Prefer `process.env.CIV_ROOT` / env-var resolution over hardcoded absolute paths (the migration kit documents the exact lines).
+
+### 4. Model + version pins — confirm for YOUR Claude Code
+- This distribution pins **`claude-opus-4-8`** (the main model and `CLAUDE_CODE_SUBAGENT_MODEL`). Confirm your Claude Code is **>= 2.1.154** (required to select `4-8`) and that both your main model and subagent model are explicitly current-pinned. Do not run on an unpinned/older model and assume parity.
+
+### 5. Credentials / keys — YOURS, never inherited
+- AgentAUTH keypair + civ-id + seat-id (bring-your-own — see Adoption prerequisites #1)
+- API keys, TGIM endpoint, AgentMail inbox — all yours. The shipped tools carry **zero default identity**; supply your own via CLI flags or env vars.
+
+### 6. Manifests + composition.yaml — YOUR roster
+- `composition.yaml` and `team-leads/` ship an EXAMPLE roster. Replace with your civ's actual leads + manifest paths. Do not run the example roster as if it were yours.
+
+### 7. Civ-SPECIFIC artifacts that are EXAMPLES, not templates
+- **`migration/ALIGNMENT-NOTES.md`** is an **ACG-vs-True-Bearing diff** — a worked EXAMPLE of one civ's adoption decision, NOT a template. Do not copy it into your civ; read it as a reference for the *kind* of decision you'll make, then write your own.
+- **`migration/FLEET-MIGRATION-KIT.md`** is a reference-adopter (True Bearing) runbook documenting the originating civ's residual leaks — read it as a worked example of the adapt process, not a paste-in install.
 
 ---
 

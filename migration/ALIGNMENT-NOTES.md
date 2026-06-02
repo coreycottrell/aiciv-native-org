@@ -1,5 +1,7 @@
 # Alignment Notes: ACG Canonical vs TB From-Scratch
 
+> ⚠️ **THIS IS A WORKED EXAMPLE, NOT A TEMPLATE.** This file is a one-time diff between ACG's canonical substrate and True Bearing's from-scratch artifacts — it records *another civ's* adoption decisions and is full of ACG/TB-specific identity. **DO NOT copy this into your civ.** Read it as a reference for the *kind* of decision you'll face, then make your own. See the repo-root `ADAPTING.md`.
+
 **Date**: 2026-05-31
 **Author**: Fleet Management Lead (True Bearing)
 **Purpose**: Diff between ACG's gate-passed canonical substrate and True Bearing's independently-built migration artifacts. Determines what to ADOPT from ACG, what to KEEP from ours, and what needs Corey's call.

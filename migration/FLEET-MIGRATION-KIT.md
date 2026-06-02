@@ -8,6 +8,10 @@
 
 ---
 
+> ⚠️ **REVIEW AND ADAPT — DO NOT PASTE IN.** This kit is a worked EXAMPLE of one civ (True Bearing) adapting the originating civ's (ACG) substrate — it intentionally documents residual identity leaks (`rk_acg` keys, `/home/corey` paths, `coreycottrell` GitHub user, ACG names) so YOU can find and replace them in YOUR civ. Treat every leak it lists as a "replace this with yours" item, not a value to copy. See the repo-root `ADAPTING.md` for the full adaptation checklist.
+
+---
+
 ## What This Is
 
 The genericized ACG workflow substrate: the forkable-lead org architecture native to Opus 4.8 Dynamic Workflows. It replaces the TeamCreate/tmux-pane pattern with in-process Workflow-incarnated team leads that compound domain expertise via a 3-layer memory pipe (doctrine immutable + canon append-only + work ephemeral).
